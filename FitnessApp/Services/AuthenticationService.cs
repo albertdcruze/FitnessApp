@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FitnessApp.Common;
 using FitnessApp.Models;
 using FitnessApp.Repositories;
+using Microsoft.Data.Sqlite;
 
 namespace FitnessApp.Services;
 
@@ -14,8 +15,11 @@ public sealed class AuthenticationService
     private const int PasswordHashIterations = 100000;
     private const int SaltLength = 16;
     private const int HashLength = 32;
+    private const int SqliteConstraintErrorCode = 19;
+    private const int SqliteConstraintUniqueErrorCode = 2067;
     private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(5);
 
+    private const string DuplicateUsernameMessage = "Username already exists.";
     private const string InvalidCredentialsMessage = "Username or password is incorrect.";
     private const string ActiveLockoutMessage = "Too many failed login attempts. Try again later.";
 
@@ -116,14 +120,23 @@ public sealed class AuthenticationService
             .ConfigureAwait(false);
         if (existingUser is not null)
         {
-            return OperationResult<User>.Failure("Username already exists.");
+            return OperationResult<User>.Failure(DuplicateUsernameMessage);
         }
 
         var user = new User(
             usernameResult.Value!,
             HashPassword(passwordResult.Value!),
             DateTimeOffset.UtcNow);
-        var userId = await _userRepository.AddAsync(user).ConfigureAwait(false);
+        long userId;
+        try
+        {
+            userId = await _userRepository.AddAsync(user).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException exception) when (IsUsernameUniqueViolation(exception))
+        {
+            return OperationResult<User>.Failure(DuplicateUsernameMessage);
+        }
+
         var persistedUser = await _userRepository.FindByIdAsync(userId).ConfigureAwait(false);
 
         if (persistedUser is null)
@@ -185,6 +198,20 @@ public sealed class AuthenticationService
     public void Logout()
     {
         CurrentUser = null;
+    }
+
+    private static bool IsUsernameUniqueViolation(InvalidOperationException exception)
+    {
+        if (exception.InnerException is not SqliteException sqliteException)
+        {
+            return false;
+        }
+
+        return sqliteException.SqliteErrorCode == SqliteConstraintErrorCode
+            && sqliteException.SqliteExtendedErrorCode == SqliteConstraintUniqueErrorCode
+            && sqliteException.Message.Contains(
+                "UNIQUE constraint failed: Users.Username",
+                StringComparison.Ordinal);
     }
 
     private static string HashPassword(string password)

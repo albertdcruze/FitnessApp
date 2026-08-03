@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FitnessApp.Common;
 using FitnessApp.Models;
 using FitnessApp.Repositories;
 using FitnessApp.Services;
 using FitnessApp.Tests.Data;
+using Microsoft.Data.Sqlite;
 using Xunit;
 
 namespace FitnessApp.Tests.Services;
@@ -219,6 +221,44 @@ public sealed class AuthenticationServiceTests
         Assert.False(duplicateResult.IsSuccess);
         Assert.Equal("Username already exists.", duplicateResult.ErrorMessage);
         Assert.Equal(1, await CountUsersAsync(database));
+    }
+
+    [Fact]
+    public async Task RegisterAsync_ConvertsConcurrentUsernameConstraintViolationToDuplicateFailure()
+    {
+        await using var database = await RepositoryTestDatabase.CreateAsync();
+        var service = new AuthenticationService(database.Users);
+        var registrationTasks = Enumerable.Range(0, 8)
+            .Select(_ => Task.Run(() => service.RegisterAsync("Race01", Password)))
+            .ToArray();
+
+        var results = await Task.WhenAll(registrationTasks);
+
+        Assert.Equal(1, results.Count(result => result.IsSuccess));
+        var duplicateResults = results.Where(result => !result.IsSuccess).ToArray();
+        Assert.Equal(7, duplicateResults.Length);
+        Assert.All(
+            duplicateResults,
+            result => Assert.Equal("Username already exists.", result.ErrorMessage));
+        Assert.Equal(1, await CountUsersAsync(database));
+    }
+
+    [Fact]
+    public async Task RegisterAsync_ReThrowsUnrelatedAddDatabaseFailures()
+    {
+        await using var database = await RepositoryTestDatabase.CreateAsync();
+        var readOnlyConnectionString = new SqliteConnectionStringBuilder(database.ConnectionString)
+        {
+            Mode = SqliteOpenMode.ReadOnly
+        }.ToString();
+        var service = new AuthenticationService(new UserRepository(readOnlyConnectionString));
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.RegisterAsync("ReadOnly01", Password));
+
+        var sqliteException = Assert.IsType<SqliteException>(exception.InnerException);
+        Assert.NotEqual(2067, sqliteException.SqliteExtendedErrorCode);
+        Assert.Equal(0, await CountUsersAsync(database));
     }
 
     [Fact]
