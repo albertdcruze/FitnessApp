@@ -66,40 +66,51 @@
             </Border>
 
             <WrapPanel Orientation="Horizontal"
-                       ItemWidth="320"
+                       ItemWidth="280"
                        ItemSpacing="12"
                        LineSpacing="12">
-                <shad:Card Width="320"
-                           HasShadow="False">
+                <shad:Card HasShadow="False">
                     <StackPanel Margin="20"
                                 Spacing="6">
                         <TextBlock Text="Estimated calories burned today"
                                    Classes="value-label"
                                    TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding TotalCalories, StringFormat='{}{0:0.##} estimated calories'}"
-                                   Classes="value" />
+                        <TextBlock Text="{Binding TotalCalories, StringFormat='{}{0:0.##}'}"
+                                   Classes="value"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="estimated calories"
+                                   Classes="muted"
+                                   TextWrapping="Wrap" />
                     </StackPanel>
                 </shad:Card>
-                <shad:Card Width="320"
-                           HasShadow="False"
+                <shad:Card HasShadow="False"
                            IsVisible="{Binding HasGoal}">
                     <StackPanel Margin="20"
                                 Spacing="6">
                         <TextBlock Text="Daily target"
-                                   Classes="value-label" />
-                        <TextBlock Text="{Binding TargetCalories, StringFormat='{}{0:0.##} estimated calories'}"
-                                   Classes="value" />
+                                   Classes="value-label"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding TargetCalories, StringFormat='{}{0:0.##}'}"
+                                   Classes="value"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="estimated calories"
+                                   Classes="muted"
+                                   TextWrapping="Wrap" />
                     </StackPanel>
                 </shad:Card>
-                <shad:Card Width="320"
-                           HasShadow="False"
+                <shad:Card HasShadow="False"
                            IsVisible="{Binding HasGoal}">
                     <StackPanel Margin="20"
                                 Spacing="6">
                         <TextBlock Text="Remaining today"
-                                   Classes="value-label" />
-                        <TextBlock Text="{Binding RemainingCalories, StringFormat='{}{0:0.##} estimated calories'}"
-                                   Classes="value" />
+                                   Classes="value-label"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding RemainingCalories, StringFormat='{}{0:0.##}'}"
+                                   Classes="value"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="estimated calories"
+                                   Classes="muted"
+                                   TextWrapping="Wrap" />
                     </StackPanel>
                 </shad:Card>
             </WrapPanel>
@@ -110,13 +121,16 @@
                             Spacing="12">
                     <TextBlock Text="Today’s progress"
                                Classes="section-title" />
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="6">
+                    <Grid ColumnDefinitions="Auto,*"
+                          ColumnSpacing="6">
                         <TextBlock Text="Progress"
                                    Classes="field-label" />
-                        <TextBlock Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}%'}"
-                                   Classes="value-label" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}%'}"
+                                   Classes="value-label"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap" />
+                    </Grid>
                     <ProgressBar Minimum="0"
                                  Maximum="100"
                                  Height="12"

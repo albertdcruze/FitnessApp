@@ -5,7 +5,7 @@
     xmlns:vm="using:FitnessApp.ViewModels"
     xmlns:views="using:FitnessApp.Views"
     xmlns:themes="clr-namespace:ShadUI;assembly=ShadUI"
-    RequestedThemeVariant="Default">
+    RequestedThemeVariant="Light">
 
     <Application.Resources>
         <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F6F8FB" />

@@ -92,7 +92,7 @@
                         </Grid>
                         <TextBox Text="{Binding Metric1Input, Mode=TwoWay}"
                                  IsEnabled="{Binding !IsBusy}"
-                                 AutomationProperties.Name="Metric 1"
+                                 AutomationProperties.Name="{Binding Metric1Label}"
                                  AutomationProperties.HelpText="{Binding Metric1Guidance}" />
                         <TextBlock Text="{Binding Metric1Guidance}"
                                    Classes="muted"
@@ -110,7 +110,7 @@
                         </Grid>
                         <TextBox Text="{Binding Metric2Input, Mode=TwoWay}"
                                  IsEnabled="{Binding !IsBusy}"
-                                 AutomationProperties.Name="Metric 2"
+                                 AutomationProperties.Name="{Binding Metric2Label}"
                                  AutomationProperties.HelpText="{Binding Metric2Guidance}" />
                         <TextBlock Text="{Binding Metric2Guidance}"
                                    Classes="muted"
@@ -128,7 +128,7 @@
                         </Grid>
                         <TextBox Text="{Binding Metric3Input, Mode=TwoWay}"
                                  IsEnabled="{Binding !IsBusy}"
-                                 AutomationProperties.Name="Metric 3"
+                                 AutomationProperties.Name="{Binding Metric3Label}"
                                  AutomationProperties.HelpText="{Binding Metric3Guidance}" />
                         <TextBlock Text="{Binding Metric3Guidance}"
                                    Classes="muted"
