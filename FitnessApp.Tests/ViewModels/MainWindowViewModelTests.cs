@@ -162,21 +162,15 @@ public sealed class MainWindowViewModelTests
         var registerViewModel = new RegisterViewModel(
             authenticationService,
             navigationService);
-        var dashboardViewModel = new AuthenticatedRoutePlaceholderViewModel(
+        var dashboardViewModel = new RouteTestViewModel(
             AppRoute.Dashboard,
-            "Dashboard",
-            authenticationService,
-            navigationService);
-        var goalViewModel = new AuthenticatedRoutePlaceholderViewModel(
+            "Dashboard");
+        var goalViewModel = new RouteTestViewModel(
             AppRoute.Goal,
-            "Set Daily Goal",
-            authenticationService,
-            navigationService);
-        var recordActivityViewModel = new AuthenticatedRoutePlaceholderViewModel(
+            "Set Daily Goal");
+        var recordActivityViewModel = new RouteTestViewModel(
             AppRoute.RecordActivity,
-            "Record Activity",
-            authenticationService,
-            navigationService);
+            "Record Activity");
         var routeViewModels = new Dictionary<AppRoute, ViewModelBase>
         {
             [AppRoute.Login] = loginViewModel,
@@ -200,9 +194,9 @@ public sealed class MainWindowViewModelTests
         NavigationService NavigationService,
         LoginViewModel LoginViewModel,
         RegisterViewModel RegisterViewModel,
-        AuthenticatedRoutePlaceholderViewModel DashboardViewModel,
-        AuthenticatedRoutePlaceholderViewModel GoalViewModel,
-        AuthenticatedRoutePlaceholderViewModel RecordActivityViewModel,
+        RouteTestViewModel DashboardViewModel,
+        RouteTestViewModel GoalViewModel,
+        RouteTestViewModel RecordActivityViewModel,
         IReadOnlyDictionary<AppRoute, ViewModelBase> RouteViewModels);
 
     private sealed class NavigationAwareTestViewModel : ViewModelBase, INavigationAware

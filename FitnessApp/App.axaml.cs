@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using FitnessApp.Calculators;
 using FitnessApp.Common;
 using FitnessApp.Data;
 using FitnessApp.Repositories;
@@ -33,6 +34,18 @@ public partial class App : Application
             var goalService = new GoalService(goalRepository);
             var progressService = new ProgressService(goalRepository, activityRepository);
             var navigationService = new NavigationService();
+            IActivityCalculator[] activityCalculators =
+            [
+                new WalkingCalculator(),
+                new SwimmingCalculator(),
+                new RunningCalculator(),
+                new CyclingCalculator(),
+                new StationaryRowingCalculator(),
+                new StrengthTrainingCalculator()
+            ];
+            var activityService = new ActivityService(
+                activityRepository,
+                activityCalculators);
 
             var loginViewModel = new LoginViewModel(
                 authenticationService,
@@ -52,11 +65,11 @@ public partial class App : Application
                 goalService,
                 navigationService,
                 static () => DateTimeOffset.UtcNow);
-            var recordActivityViewModel = new AuthenticatedRoutePlaceholderViewModel(
-                AppRoute.RecordActivity,
-                "Record Activity",
+            var recordActivityViewModel = new RecordActivityViewModel(
                 authenticationService,
-                navigationService);
+                activityService,
+                navigationService,
+                static () => DateTimeOffset.UtcNow);
 
             IReadOnlyDictionary<AppRoute, ViewModelBase> routeViewModels =
                 new Dictionary<AppRoute, ViewModelBase>

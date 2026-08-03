@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FitnessApp.Calculators;
 using FitnessApp.Common;
 using FitnessApp.Repositories;
 using FitnessApp.Services;
@@ -17,7 +18,7 @@ public sealed class AuthenticationNavigationIntegrationTests
         new(2026, 8, 3, 12, 0, 0, TimeSpan.Zero);
 
     [Fact]
-    public async Task SuccessfulLogin_UsesTheSharedSessionAndDisplaysTheDashboardPlaceholder()
+    public async Task SuccessfulLogin_UsesTheSharedSessionAndDisplaysTheDashboardRoute()
     {
         await using var database = await RepositoryTestDatabase.CreateAsync();
         var graph = CreateGraph(database);
@@ -26,6 +27,7 @@ public sealed class AuthenticationNavigationIntegrationTests
         graph.LoginViewModel.Password = Password;
 
         await graph.LoginViewModel.LoginCommand.ExecuteAsync(null);
+        await graph.MainWindowViewModel.CurrentActivationTask;
 
         Assert.True(registration.IsSuccess);
         Assert.Equal(AppRoute.Dashboard, graph.NavigationService.CurrentRoute);
@@ -45,6 +47,7 @@ public sealed class AuthenticationNavigationIntegrationTests
         graph.LoginViewModel.Username = "LogoutUser01";
         graph.LoginViewModel.Password = Password;
         await graph.LoginViewModel.LoginCommand.ExecuteAsync(null);
+        await graph.MainWindowViewModel.CurrentActivationTask;
 
         graph.DashboardViewModel.LogoutCommand.Execute(null);
 
@@ -76,37 +79,21 @@ public sealed class AuthenticationNavigationIntegrationTests
     [InlineData(AppRoute.Login)]
     [InlineData(AppRoute.Register)]
     [InlineData((AppRoute)999)]
-    public void AuthenticatedPlaceholder_RejectsNonAuthenticatedRoutes(AppRoute route)
+    public void RouteTestViewModel_RejectsNonAuthenticatedRoutes(AppRoute route)
     {
-        var authenticationService = new AuthenticationService(
-            new UserRepository("Data Source=:memory:"));
-        var navigationService = new NavigationService();
-
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new AuthenticatedRoutePlaceholderViewModel(
-                route,
-                "Unsupported",
-                authenticationService,
-                navigationService));
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new RouteTestViewModel(route, "Test route"));
     }
 
     [Theory]
     [InlineData(AppRoute.Dashboard, "Dashboard")]
     [InlineData(AppRoute.Goal, "Set Daily Goal")]
     [InlineData(AppRoute.RecordActivity, "Record Activity")]
-    public void AuthenticatedPlaceholder_ExposesItsConfiguredRouteAndTitle(
+    public void RouteTestViewModel_ExposesItsConfiguredRouteAndTitle(
         AppRoute route,
         string title)
     {
-        var authenticationService = new AuthenticationService(
-            new UserRepository("Data Source=:memory:"));
-        var navigationService = new NavigationService();
-
-        var viewModel = new AuthenticatedRoutePlaceholderViewModel(
-            route,
-            title,
-            authenticationService,
-            navigationService);
+        var viewModel = new RouteTestViewModel(route, title);
 
         Assert.Equal(route, viewModel.Route);
         Assert.Equal(title, viewModel.Title);
@@ -123,21 +110,25 @@ public sealed class AuthenticationNavigationIntegrationTests
         var registerViewModel = new RegisterViewModel(
             authenticationService,
             navigationService);
-        var dashboardViewModel = new AuthenticatedRoutePlaceholderViewModel(
-            AppRoute.Dashboard,
-            "Dashboard",
+        var dashboardViewModel = new DashboardViewModel(
             authenticationService,
-            navigationService);
-        var goalViewModel = new AuthenticatedRoutePlaceholderViewModel(
-            AppRoute.Goal,
-            "Set Daily Goal",
+            new ProgressService(database.Goals, database.Activities),
+            navigationService,
+            static () => FixedUtcNow,
+            TimeZoneInfo.Utc);
+        var goalViewModel = new GoalViewModel(
             authenticationService,
-            navigationService);
-        var recordActivityViewModel = new AuthenticatedRoutePlaceholderViewModel(
-            AppRoute.RecordActivity,
-            "Record Activity",
+            new GoalService(database.Goals),
+            navigationService,
+            static () => FixedUtcNow);
+        var activityService = new ActivityService(
+            database.Activities,
+            CreateCalculators());
+        var recordActivityViewModel = new RecordActivityViewModel(
             authenticationService,
-            navigationService);
+            activityService,
+            navigationService,
+            static () => FixedUtcNow);
         IReadOnlyDictionary<AppRoute, ViewModelBase> routeViewModels =
             new Dictionary<AppRoute, ViewModelBase>
             {
@@ -157,7 +148,22 @@ public sealed class AuthenticationNavigationIntegrationTests
             loginViewModel,
             registerViewModel,
             dashboardViewModel,
+            goalViewModel,
+            recordActivityViewModel,
             mainWindowViewModel);
+    }
+
+    private static IActivityCalculator[] CreateCalculators()
+    {
+        return
+        [
+            new WalkingCalculator(),
+            new SwimmingCalculator(),
+            new RunningCalculator(),
+            new CyclingCalculator(),
+            new StationaryRowingCalculator(),
+            new StrengthTrainingCalculator()
+        ];
     }
 
     private sealed record CompositionGraph(
@@ -165,6 +171,8 @@ public sealed class AuthenticationNavigationIntegrationTests
         NavigationService NavigationService,
         LoginViewModel LoginViewModel,
         RegisterViewModel RegisterViewModel,
-        AuthenticatedRoutePlaceholderViewModel DashboardViewModel,
+        DashboardViewModel DashboardViewModel,
+        GoalViewModel GoalViewModel,
+        RecordActivityViewModel RecordActivityViewModel,
         MainWindowViewModel MainWindowViewModel);
 }

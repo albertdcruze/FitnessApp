@@ -20,8 +20,8 @@
         <DataTemplate DataType="{x:Type vm:GoalViewModel}">
             <views:GoalView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:AuthenticatedRoutePlaceholderViewModel}">
-            <views:AuthenticatedRoutePlaceholderView />
+        <DataTemplate DataType="{x:Type vm:RecordActivityViewModel}">
+            <views:RecordActivityView />
         </DataTemplate>
     </Application.DataTemplates>
 

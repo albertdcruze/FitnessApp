@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitnessApp.ViewModels"
+             xmlns:models="using:FitnessApp.Models"
+             xmlns:shad="using:ShadUI"
+             x:Class="FitnessApp.Views.RecordActivityView"
+             x:DataType="vm:RecordActivityViewModel">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24"
+                    Spacing="16">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Record Activity"
+                               FontSize="26"
+                               FontWeight="Bold" />
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="4">
+                        <TextBlock Text="Signed in as"
+                                   FontSize="16" />
+                        <TextBlock Text="{Binding Username}"
+                                   FontSize="16" />
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Column="1"
+                        Content="Log out"
+                        Classes="secondary"
+                        Command="{Binding LogoutCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+            </Grid>
+
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="IndianRed"
+                       TextWrapping="Wrap" />
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="ForestGreen"
+                       TextWrapping="Wrap" />
+            <TextBlock Text="Recording your activity..."
+                       IsVisible="{Binding IsBusy}" />
+
+            <shad:Card HasShadow="True">
+                <StackPanel Margin="16"
+                            Spacing="10">
+                    <TextBlock Text="Activity"
+                               FontWeight="Bold" />
+                    <ComboBox ItemsSource="{Binding AvailableActivities}"
+                              SelectedItem="{Binding SelectedActivity, Mode=TwoWay}"
+                              IsEnabled="{Binding !IsBusy}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:ActivityDefinition">
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </shad:Card>
+
+            <shad:Card HasShadow="True">
+                <StackPanel Margin="16"
+                            Spacing="12">
+                    <TextBlock Text="Activity metrics"
+                               FontWeight="Bold" />
+
+                    <StackPanel Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto"
+                              ColumnSpacing="8">
+                            <TextBlock Text="{Binding Metric1Label}" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Metric1Unit}" />
+                        </Grid>
+                        <TextBox Text="{Binding Metric1Input, Mode=TwoWay}"
+                                 IsEnabled="{Binding !IsBusy}" />
+                        <TextBlock Text="{Binding Metric1Guidance}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto"
+                              ColumnSpacing="8">
+                            <TextBlock Text="{Binding Metric2Label}" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Metric2Unit}" />
+                        </Grid>
+                        <TextBox Text="{Binding Metric2Input, Mode=TwoWay}"
+                                 IsEnabled="{Binding !IsBusy}" />
+                        <TextBlock Text="{Binding Metric2Guidance}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto"
+                              ColumnSpacing="8">
+                            <TextBlock Text="{Binding Metric3Label}" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Metric3Unit}" />
+                        </Grid>
+                        <TextBox Text="{Binding Metric3Input, Mode=TwoWay}"
+                                 IsEnabled="{Binding !IsBusy}" />
+                        <TextBlock Text="{Binding Metric3Guidance}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <Button Content="Record Activity"
+                            Classes="primary"
+                            Command="{Binding RecordActivityCommand}"
+                            IsEnabled="{Binding !IsBusy}" />
+                </StackPanel>
+            </shad:Card>
+
+            <shad:Card HasShadow="True"
+                       IsVisible="{Binding HasResult}">
+                <StackPanel Margin="16"
+                            Spacing="6">
+                    <TextBlock Text="Estimated calories"
+                               FontWeight="Bold" />
+                    <TextBlock Text="{Binding EstimatedCalories, StringFormat='{}{0:0.##}'}"
+                               FontSize="22" />
+                </StackPanel>
+            </shad:Card>
+
+            <StackPanel Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Clear Form"
+                        Classes="secondary"
+                        Command="{Binding ClearFormCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+                <Button Content="Back to Dashboard"
+                        Classes="secondary"
+                        Command="{Binding BackToDashboardCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

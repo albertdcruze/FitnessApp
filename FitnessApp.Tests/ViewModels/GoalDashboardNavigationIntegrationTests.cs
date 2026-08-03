@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using FitnessApp.Calculators;
 using FitnessApp.Common;
 using FitnessApp.Models;
 using FitnessApp.Repositories;
@@ -163,15 +164,18 @@ public sealed class GoalDashboardNavigationIntegrationTests
     }
 
     [Fact]
-    public async Task RecordActivityRouteStillUsesTheAuthenticatedPlaceholder()
+    public async Task RecordActivityRouteUsesRecordActivityViewModel()
     {
         await using var graph = await CompositionGraph.CreateAsync();
-        await graph.AuthenticateAsync("GoalPlaceholderUser01");
+        await graph.AuthenticateAsync("RecordActivityUser01");
 
         graph.NavigationService.Navigate(AppRoute.RecordActivity);
+        await graph.MainWindowViewModel.CurrentActivationTask;
 
-        Assert.IsType<AuthenticatedRoutePlaceholderViewModel>(
+        Assert.Same(graph.RecordActivityViewModel,
             graph.MainWindowViewModel.CurrentViewModel);
+        Assert.True(graph.RecordActivityViewModel.HasLoaded);
+        Assert.Equal(6, graph.RecordActivityViewModel.AvailableActivities.Count);
     }
 
     private static async Task<long> CountGoalsAsync(
@@ -244,6 +248,7 @@ public sealed class GoalDashboardNavigationIntegrationTests
             RegisterViewModel registerViewModel,
             DashboardViewModel dashboardViewModel,
             GoalViewModel goalViewModel,
+            RecordActivityViewModel recordActivityViewModel,
             MainWindowViewModel mainWindowViewModel,
             ClockValue goalClock)
         {
@@ -255,6 +260,7 @@ public sealed class GoalDashboardNavigationIntegrationTests
             RegisterViewModel = registerViewModel;
             DashboardViewModel = dashboardViewModel;
             GoalViewModel = goalViewModel;
+            RecordActivityViewModel = recordActivityViewModel;
             MainWindowViewModel = mainWindowViewModel;
             GoalClock = goalClock;
         }
@@ -274,6 +280,8 @@ public sealed class GoalDashboardNavigationIntegrationTests
         public DashboardViewModel DashboardViewModel { get; }
 
         public GoalViewModel GoalViewModel { get; }
+
+        public RecordActivityViewModel RecordActivityViewModel { get; }
 
         public MainWindowViewModel MainWindowViewModel { get; }
 
@@ -306,11 +314,23 @@ public sealed class GoalDashboardNavigationIntegrationTests
                     goalService,
                     navigationService,
                     () => goalClock.Value);
-                var recordActivityViewModel = new AuthenticatedRoutePlaceholderViewModel(
-                    AppRoute.RecordActivity,
-                    "Record Activity",
+                IActivityCalculator[] activityCalculators =
+                [
+                    new WalkingCalculator(),
+                    new SwimmingCalculator(),
+                    new RunningCalculator(),
+                    new CyclingCalculator(),
+                    new StationaryRowingCalculator(),
+                    new StrengthTrainingCalculator()
+                ];
+                var activityService = new ActivityService(
+                    database.Activities,
+                    activityCalculators);
+                var recordActivityViewModel = new RecordActivityViewModel(
                     authenticationService,
-                    navigationService);
+                    activityService,
+                    navigationService,
+                    static () => FixedUtcNow);
                 IReadOnlyDictionary<AppRoute, ViewModelBase> routeViewModels =
                     new Dictionary<AppRoute, ViewModelBase>
                     {
@@ -333,6 +353,7 @@ public sealed class GoalDashboardNavigationIntegrationTests
                     registerViewModel,
                     dashboardViewModel,
                     goalViewModel,
+                    recordActivityViewModel,
                     mainWindowViewModel,
                     goalClock);
             }
