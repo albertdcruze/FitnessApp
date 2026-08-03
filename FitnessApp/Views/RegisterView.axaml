@@ -62,13 +62,13 @@
                 </Border>
 
                 <Button Content="Register"
-                        Classes="primary"
+                        Classes="Primary"
                         IsDefault="True"
                         Command="{Binding RegisterCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         HorizontalAlignment="Stretch" />
                 <Button Content="Back to sign in"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding BackToLoginCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         HorizontalAlignment="Stretch" />

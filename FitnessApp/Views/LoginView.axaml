@@ -56,13 +56,13 @@
                 </Border>
 
                 <Button Content="Sign in"
-                        Classes="primary"
+                        Classes="Primary"
                         IsDefault="True"
                         Command="{Binding LoginCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         HorizontalAlignment="Stretch" />
                 <Button Content="Create an account"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding GoToRegisterCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         HorizontalAlignment="Stretch" />

@@ -42,6 +42,15 @@
     <Application.Styles>
         <themes:ShadTheme />
 
+        <!--
+             ShadUI supplies the actual Button.Primary and Button.Secondary
+             styles from its compiled theme. These local selector declarations
+             keep Rider's Avalonia style-class inspection aware of the
+             externally supplied classes without overriding their appearance.
+        -->
+        <Style Selector="Button.Primary" />
+        <Style Selector="Button.Secondary" />
+
         <Style Selector="Button">
             <Setter Property="MinHeight" Value="40" />
             <Setter Property="Padding" Value="16,10" />

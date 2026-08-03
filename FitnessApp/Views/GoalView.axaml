@@ -28,7 +28,7 @@
                 </StackPanel>
                 <Button Grid.Column="1"
                         Content="Log out"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding LogoutCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         input:KeyboardNavigation.TabIndex="90" />
@@ -93,7 +93,7 @@
                                Classes="muted"
                                TextWrapping="Wrap" />
                     <Button Content="Save Goal"
-                            Classes="primary"
+                            Classes="Primary"
                             IsDefault="True"
                             Command="{Binding SaveGoalCommand}"
                             IsEnabled="{Binding !IsBusy}"
@@ -102,7 +102,7 @@
             </shad:Card>
 
             <Button Content="Back to Dashboard"
-                    Classes="secondary"
+                    Classes="Secondary"
                     Command="{Binding BackToDashboardCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     HorizontalAlignment="Left" />

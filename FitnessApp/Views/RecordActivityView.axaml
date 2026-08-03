@@ -29,7 +29,7 @@
                 </StackPanel>
                 <Button Grid.Column="1"
                         Content="Log out"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding LogoutCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         input:KeyboardNavigation.TabIndex="90" />
@@ -136,7 +136,7 @@
                     </StackPanel>
 
                     <Button Content="Record Activity"
-                            Classes="primary"
+                            Classes="Primary"
                             Command="{Binding RecordActivityCommand}"
                             IsEnabled="{Binding !IsBusy}"
                             HorizontalAlignment="Stretch" />
@@ -161,11 +161,11 @@
                        ItemSpacing="10"
                        LineSpacing="10">
                 <Button Content="Clear Form"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding ClearFormCommand}"
                         IsEnabled="{Binding !IsBusy}" />
                 <Button Content="Back to Dashboard"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding BackToDashboardCommand}"
                         IsEnabled="{Binding !IsBusy}" />
             </WrapPanel>

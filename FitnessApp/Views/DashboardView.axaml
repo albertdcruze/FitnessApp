@@ -28,13 +28,13 @@
                 </StackPanel>
                 <Button Grid.Column="1"
                         Content="Refresh"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding RefreshCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         input:KeyboardNavigation.TabIndex="80" />
                 <Button Grid.Column="2"
                         Content="Log out"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding LogoutCommand}"
                         IsEnabled="{Binding !IsBusy}"
                         input:KeyboardNavigation.TabIndex="90" />
@@ -156,11 +156,11 @@
                        ItemSpacing="10"
                        LineSpacing="10">
                 <Button Content="Record Activity"
-                        Classes="primary"
+                        Classes="Primary"
                         Command="{Binding NavigateToRecordActivityCommand}"
                         IsEnabled="{Binding !IsBusy}" />
                 <Button Content="Set Goal"
-                        Classes="secondary"
+                        Classes="Secondary"
                         Command="{Binding NavigateToGoalCommand}"
                         IsEnabled="{Binding !IsBusy}" />
             </WrapPanel>
