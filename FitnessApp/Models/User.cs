@@ -36,4 +36,26 @@ public sealed class User
     public DateTimeOffset? LockoutUntilUtc { get; private set; }
 
     public DateTimeOffset CreatedAtUtc { get; private set; }
+
+    public void RecordFailedLogin()
+    {
+        FailedLoginAttempts++;
+    }
+
+    public void ApplyLockout(DateTimeOffset lockoutUntilUtc)
+    {
+        LockoutUntilUtc = lockoutUntilUtc.ToUniversalTime();
+    }
+
+    public void ResetLoginFailures()
+    {
+        FailedLoginAttempts = 0;
+        LockoutUntilUtc = null;
+    }
+
+    public bool IsLocked(DateTimeOffset nowUtc)
+    {
+        return LockoutUntilUtc.HasValue
+            && nowUtc.ToUniversalTime() < LockoutUntilUtc.Value.ToUniversalTime();
+    }
 }
