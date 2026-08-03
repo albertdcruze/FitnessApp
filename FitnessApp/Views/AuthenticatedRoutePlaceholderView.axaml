@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitnessApp.ViewModels"
+             xmlns:shad="using:ShadUI"
+             x:Class="FitnessApp.Views.AuthenticatedRoutePlaceholderView"
+             x:DataType="vm:AuthenticatedRoutePlaceholderViewModel">
+
+    <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+        <shad:Card HasShadow="True">
+            <StackPanel Width="360"
+                        Margin="24"
+                        Spacing="12">
+                <TextBlock Text="{Binding Title}"
+                           FontSize="24"
+                           FontWeight="Bold" />
+                <TextBlock Text="This feature will be available in a later task."
+                           TextWrapping="Wrap" />
+                <Button Content="Log out"
+                        Classes="secondary"
+                        Command="{Binding LogoutCommand}" />
+            </StackPanel>
+        </shad:Card>
+    </Grid>
+</UserControl>

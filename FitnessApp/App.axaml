@@ -2,12 +2,21 @@
     x:Class="FitnessApp.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FitnessApp"
+    xmlns:vm="using:FitnessApp.ViewModels"
+    xmlns:views="using:FitnessApp.Views"
     xmlns:themes="clr-namespace:ShadUI;assembly=ShadUI"
     RequestedThemeVariant="Default">
 
     <Application.DataTemplates>
-        <local:ViewLocator />
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RegisterViewModel}">
+            <views:RegisterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AuthenticatedRoutePlaceholderViewModel}">
+            <views:AuthenticatedRoutePlaceholderView />
+        </DataTemplate>
     </Application.DataTemplates>
 
     <Application.Styles>

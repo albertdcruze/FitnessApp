@@ -2,42 +2,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:FitnessApp.ViewModels"
         xmlns:shad="using:ShadUI"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="FitnessApp.Views.MainWindow"
-        x:DataType="vm:MainViewModel"
+        x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="FitnessApp">
+        Title="FitnessApp"
+        Width="800"
+        Height="520">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
-
-    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Width="420"
-                Spacing="16">
-        <TextBlock Text="FitnessApp"
-                   FontSize="32"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center" />
-
-        <TextBlock Text="Fitness Tracking Desktop Application"
-                   HorizontalAlignment="Center" />
-
+    <Grid Margin="24">
         <shad:Card HasShadow="True">
-            <StackPanel Margin="24"
-                        Spacing="16">
-                <TextBlock Text="Ready to track your progress?"
-                           HorizontalAlignment="Center" />
-                <Button Content="Get Started"
-                        Classes="primary"
-                        HorizontalAlignment="Center" />
-            </StackPanel>
+            <ContentControl Margin="24"
+                            Content="{Binding CurrentViewModel}" />
         </shad:Card>
-    </StackPanel>
+    </Grid>
 
 </Window>

@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitnessApp.ViewModels"
+             xmlns:shad="using:ShadUI"
+             x:Class="FitnessApp.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+        <shad:Card HasShadow="True">
+            <StackPanel Width="320"
+                        Margin="24"
+                        Spacing="12">
+                <TextBlock Text="Sign in"
+                           FontSize="24"
+                           FontWeight="Bold" />
+                <TextBox PlaceholderText="Username"
+                         Text="{Binding Username, Mode=TwoWay}" />
+                <TextBox PlaceholderText="Password"
+                         PasswordChar="*"
+                         Text="{Binding Password, Mode=TwoWay}" />
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="IndianRed"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="ForestGreen"
+                           TextWrapping="Wrap" />
+                <Button Content="Sign in"
+                        Classes="primary"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+                <Button Content="Create an account"
+                        Classes="secondary"
+                        Command="{Binding GoToRegisterCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+            </StackPanel>
+        </shad:Card>
+    </Grid>
+</UserControl>
