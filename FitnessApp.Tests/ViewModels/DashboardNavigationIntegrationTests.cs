@@ -72,18 +72,19 @@ public sealed class DashboardNavigationIntegrationTests
     }
 
     [Fact]
-    public async Task GoalAndRecordActivityRoutesRemainPlaceholders()
+    public async Task RecordActivityRouteRemainsPlaceholder()
     {
         await using var graph = await CompositionGraph.CreateAsync();
-        await graph.AuthenticationService.RegisterAsync("PlaceholderUser01", Password);
+        await graph.AuthenticationService.RegisterAsync("RecordActivityUser01", Password);
         var login = await graph.AuthenticationService.LoginAsync(
-            "PlaceholderUser01",
+            "RecordActivityUser01",
             Password,
             FixedUtcNow);
         Assert.True(login.IsSuccess);
 
         graph.NavigationService.Navigate(AppRoute.Goal);
-        Assert.IsType<AuthenticatedRoutePlaceholderViewModel>(
+        await graph.MainWindowViewModel.CurrentActivationTask;
+        Assert.Same(graph.GoalViewModel,
             graph.MainWindowViewModel.CurrentViewModel);
         graph.NavigationService.Navigate(AppRoute.RecordActivity);
         Assert.IsType<AuthenticatedRoutePlaceholderViewModel>(
@@ -163,6 +164,7 @@ public sealed class DashboardNavigationIntegrationTests
             LoginViewModel loginViewModel,
             RegisterViewModel registerViewModel,
             DashboardViewModel dashboardViewModel,
+            GoalViewModel goalViewModel,
             MainWindowViewModel mainWindowViewModel)
         {
             Database = database;
@@ -171,6 +173,7 @@ public sealed class DashboardNavigationIntegrationTests
             LoginViewModel = loginViewModel;
             RegisterViewModel = registerViewModel;
             DashboardViewModel = dashboardViewModel;
+            GoalViewModel = goalViewModel;
             MainWindowViewModel = mainWindowViewModel;
         }
 
@@ -185,6 +188,8 @@ public sealed class DashboardNavigationIntegrationTests
         public RegisterViewModel RegisterViewModel { get; }
 
         public DashboardViewModel DashboardViewModel { get; }
+
+        public GoalViewModel GoalViewModel { get; }
 
         public MainWindowViewModel MainWindowViewModel { get; }
 
@@ -208,11 +213,12 @@ public sealed class DashboardNavigationIntegrationTests
                     navigationService,
                     static () => FixedUtcNow,
                     TimeZoneInfo.Utc);
-                var goalViewModel = new AuthenticatedRoutePlaceholderViewModel(
-                    AppRoute.Goal,
-                    "Set Daily Goal",
+                var goalService = new GoalService(database.Goals);
+                var goalViewModel = new GoalViewModel(
                     authenticationService,
-                    navigationService);
+                    goalService,
+                    navigationService,
+                    static () => FixedUtcNow);
                 var recordActivityViewModel = new AuthenticatedRoutePlaceholderViewModel(
                     AppRoute.RecordActivity,
                     "Record Activity",
@@ -238,6 +244,7 @@ public sealed class DashboardNavigationIntegrationTests
                     loginViewModel,
                     registerViewModel,
                     dashboardViewModel,
+                    goalViewModel,
                     mainWindowViewModel);
             }
             catch
