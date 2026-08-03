@@ -2,38 +2,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:FitnessApp.ViewModels"
              xmlns:shad="using:ShadUI"
+             xmlns:converters="using:Avalonia.Data.Converters"
              x:Class="FitnessApp.Views.LoginView"
              x:DataType="vm:LoginViewModel">
 
-    <Grid HorizontalAlignment="Center"
-          VerticalAlignment="Center">
-        <shad:Card HasShadow="True">
-            <StackPanel Width="320"
-                        Margin="24"
-                        Spacing="12">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Center">
+        <Grid Margin="24"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center">
+            <shad:Card MaxWidth="460"
+                       HorizontalAlignment="Center"
+                       HasShadow="False">
+                <StackPanel MinWidth="280"
+                            MaxWidth="400"
+                            Margin="28"
+                            HorizontalAlignment="Stretch"
+                            Spacing="14">
+                <TextBlock Text="FitnessApp"
+                           Classes="section-title" />
                 <TextBlock Text="Sign in"
-                           FontSize="24"
-                           FontWeight="Bold" />
-                <TextBox PlaceholderText="Username"
-                         Text="{Binding Username, Mode=TwoWay}" />
-                <TextBox PlaceholderText="Password"
-                         PasswordChar="*"
-                         Text="{Binding Password, Mode=TwoWay}" />
-                <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="IndianRed"
+                           Classes="page-title" />
+                <TextBlock Text="Use your FitnessApp account to continue."
+                           Classes="muted"
                            TextWrapping="Wrap" />
-                <TextBlock Text="{Binding StatusMessage}"
-                           Foreground="ForestGreen"
-                           TextWrapping="Wrap" />
+
+                <TextBlock Text="Username"
+                           Classes="field-label" />
+                <TextBox Text="{Binding Username, Mode=TwoWay}"
+                         AutomationProperties.Name="Username"
+                         AutomationProperties.HelpText="Enter your FitnessApp username." />
+
+                <TextBlock Text="Password"
+                           Classes="field-label" />
+                <TextBox PasswordChar="*"
+                         Text="{Binding Password, Mode=TwoWay}"
+                         AutomationProperties.Name="Password"
+                         AutomationProperties.HelpText="Enter your FitnessApp password." />
+
+                <Border Classes="message-error"
+                        IsVisible="{Binding ErrorMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Classes="message-error"
+                               TextWrapping="Wrap" />
+                </Border>
+                <Border Classes="message-success"
+                        IsVisible="{Binding StatusMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Classes="message-success"
+                               TextWrapping="Wrap" />
+                </Border>
+
                 <Button Content="Sign in"
                         Classes="primary"
+                        IsDefault="True"
                         Command="{Binding LoginCommand}"
-                        IsEnabled="{Binding !IsBusy}" />
+                        IsEnabled="{Binding !IsBusy}"
+                        HorizontalAlignment="Stretch" />
                 <Button Content="Create an account"
                         Classes="secondary"
                         Command="{Binding GoToRegisterCommand}"
-                        IsEnabled="{Binding !IsBusy}" />
-            </StackPanel>
-        </shad:Card>
-    </Grid>
+                        IsEnabled="{Binding !IsBusy}"
+                        HorizontalAlignment="Stretch" />
+
+                <TextBlock Text="Signing in..."
+                           Classes="muted"
+                           HorizontalAlignment="Center"
+                           IsVisible="{Binding IsBusy}" />
+                </StackPanel>
+            </shad:Card>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

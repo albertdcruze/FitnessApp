@@ -7,6 +7,20 @@
     xmlns:themes="clr-namespace:ShadUI;assembly=ShadUI"
     RequestedThemeVariant="Default">
 
+    <Application.Resources>
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F6F8FB" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#DCE3EC" />
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#172033" />
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#5E6B7D" />
+        <SolidColorBrush x:Key="ErrorBrush" Color="#B42318" />
+        <SolidColorBrush x:Key="ErrorSurfaceBrush" Color="#FFF3F1" />
+        <SolidColorBrush x:Key="SuccessBrush" Color="#16794A" />
+        <SolidColorBrush x:Key="SuccessSurfaceBrush" Color="#ECFDF3" />
+        <SolidColorBrush x:Key="InfoBrush" Color="#1D4ED8" />
+        <SolidColorBrush x:Key="InfoSurfaceBrush" Color="#EFF6FF" />
+    </Application.Resources>
+
     <Application.DataTemplates>
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <views:LoginView />
@@ -27,5 +41,85 @@
 
     <Application.Styles>
         <themes:ShadTheme />
+
+        <Style Selector="Button">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="MinHeight" Value="42" />
+            <Setter Property="Padding" Value="12,9" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinHeight" Value="42" />
+            <Setter Property="Padding" Value="12,9" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.field-label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.muted">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.value-label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.value">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.message-error">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="TextBlock.message-success">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+        <Style Selector="TextBlock.message-info">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource InfoBrush}" />
+        </Style>
+
+        <Style Selector="Border.message-error">
+            <Setter Property="Background" Value="{DynamicResource ErrorSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+        <Style Selector="Border.message-success">
+            <Setter Property="Background" Value="{DynamicResource SuccessSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+        <Style Selector="Border.message-info">
+            <Setter Property="Background" Value="{DynamicResource InfoSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource InfoBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
     </Application.Styles>
 </Application>

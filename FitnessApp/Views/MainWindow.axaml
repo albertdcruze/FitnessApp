@@ -6,12 +6,19 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="FitnessApp"
-        Width="800"
-        Height="520">
+        Width="1160"
+        Height="760"
+        MinWidth="900"
+        MinHeight="640"
+        Background="{DynamicResource AppBackgroundBrush}">
 
-    <Grid Margin="24">
-        <shad:Card HasShadow="True">
-            <ContentControl Margin="24"
+    <Grid Margin="28">
+        <shad:Card HasShadow="True"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+            <ContentControl Margin="28"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
                             Content="{Binding CurrentViewModel}" />
         </shad:Card>
     </Grid>
