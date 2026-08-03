@@ -5,9 +5,23 @@ namespace FitnessApp.Models;
 public sealed class User
 {
     public User(string username, string passwordHash, DateTimeOffset createdAtUtc)
+        : this(0, username, passwordHash, 0, null, createdAtUtc)
     {
+    }
+
+    internal User(
+        long userId,
+        string username,
+        string passwordHash,
+        int failedLoginAttempts,
+        DateTimeOffset? lockoutUntilUtc,
+        DateTimeOffset createdAtUtc)
+    {
+        UserId = userId;
         Username = username;
         PasswordHash = passwordHash;
+        FailedLoginAttempts = failedLoginAttempts;
+        LockoutUntilUtc = lockoutUntilUtc;
         CreatedAtUtc = createdAtUtc;
     }
 

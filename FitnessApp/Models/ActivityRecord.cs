@@ -12,7 +12,29 @@ public sealed class ActivityRecord
         double metric3Value,
         double caloriesBurned,
         DateTimeOffset recordedAtUtc)
+        : this(
+            0,
+            userId,
+            activityType,
+            metric1Value,
+            metric2Value,
+            metric3Value,
+            caloriesBurned,
+            recordedAtUtc)
     {
+    }
+
+    internal ActivityRecord(
+        long activityRecordId,
+        long userId,
+        ActivityType activityType,
+        double metric1Value,
+        double metric2Value,
+        double metric3Value,
+        double caloriesBurned,
+        DateTimeOffset recordedAtUtc)
+    {
+        ActivityRecordId = activityRecordId;
         UserId = userId;
         ActivityType = activityType;
         Metric1Value = metric1Value;

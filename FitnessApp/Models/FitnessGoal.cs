@@ -5,7 +5,17 @@ namespace FitnessApp.Models;
 public sealed class FitnessGoal
 {
     public FitnessGoal(long userId, double targetCalories, DateTimeOffset updatedAtUtc)
+        : this(0, userId, targetCalories, updatedAtUtc)
     {
+    }
+
+    internal FitnessGoal(
+        long goalId,
+        long userId,
+        double targetCalories,
+        DateTimeOffset updatedAtUtc)
+    {
+        GoalId = goalId;
         UserId = userId;
         TargetCalories = targetCalories;
         UpdatedAtUtc = updatedAtUtc;
