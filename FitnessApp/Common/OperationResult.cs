@@ -17,9 +17,8 @@ public sealed class OperationResult<T>
 
     public string? ErrorMessage { get; }
 
-    public static OperationResult<T> Success(T value)
+    public static OperationResult<T> Success(T? value)
     {
-        ArgumentNullException.ThrowIfNull(value);
         return new OperationResult<T>(true, value, null);
     }
 
