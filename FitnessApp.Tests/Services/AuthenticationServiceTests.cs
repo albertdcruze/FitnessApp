@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FitnessApp.Common;
 using FitnessApp.Models;
@@ -224,22 +225,43 @@ public sealed class AuthenticationServiceTests
     }
 
     [Fact]
-    public async Task RegisterAsync_ConvertsConcurrentUsernameConstraintViolationToDuplicateFailure()
+    public async Task RegisterAsync_DeterministicallyConvertsConcurrentUsernameConstraintViolation()
     {
         await using var database = await RepositoryTestDatabase.CreateAsync();
         var service = new AuthenticationService(database.Users);
-        var registrationTasks = Enumerable.Range(0, 8)
-            .Select(_ => Task.Run(() => service.RegisterAsync("Race01", Password)))
-            .ToArray();
+        var bothLookupsCompleted = new TaskCompletionSource<bool>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseAdds = new TaskCompletionSource<bool>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var completedLookupCount = 0;
+        service.BeforeRegistrationInsertAsync = async () =>
+        {
+            if (Interlocked.Increment(ref completedLookupCount) == 2)
+            {
+                bothLookupsCompleted.TrySetResult(true);
+            }
 
-        var results = await Task.WhenAll(registrationTasks);
+            await releaseAdds.Task.ConfigureAwait(false);
+        };
+
+        var registrationA = service.RegisterAsync("Race01", Password);
+        var registrationB = service.RegisterAsync("race01", Password);
+
+        try
+        {
+            await bothLookupsCompleted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+        finally
+        {
+            releaseAdds.TrySetResult(true);
+        }
+
+        Assert.Equal(2, Volatile.Read(ref completedLookupCount));
+        var results = await Task.WhenAll(registrationA, registrationB);
 
         Assert.Equal(1, results.Count(result => result.IsSuccess));
-        var duplicateResults = results.Where(result => !result.IsSuccess).ToArray();
-        Assert.Equal(7, duplicateResults.Length);
-        Assert.All(
-            duplicateResults,
-            result => Assert.Equal("Username already exists.", result.ErrorMessage));
+        var duplicateResult = Assert.Single(results, result => !result.IsSuccess);
+        Assert.Equal("Username already exists.", duplicateResult.ErrorMessage);
         Assert.Equal(1, await CountUsersAsync(database));
     }
 

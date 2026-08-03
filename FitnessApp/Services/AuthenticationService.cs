@@ -32,6 +32,8 @@ public sealed class AuthenticationService
 
     public User? CurrentUser { get; private set; }
 
+    internal Func<Task>? BeforeRegistrationInsertAsync { get; set; }
+
     public OperationResult<string> ValidateUsername(string username)
     {
         if (string.IsNullOrWhiteSpace(username))
@@ -127,6 +129,12 @@ public sealed class AuthenticationService
             usernameResult.Value!,
             HashPassword(passwordResult.Value!),
             DateTimeOffset.UtcNow);
+
+        if (BeforeRegistrationInsertAsync is { } beforeRegistrationInsertAsync)
+        {
+            await beforeRegistrationInsertAsync().ConfigureAwait(false);
+        }
+
         long userId;
         try
         {
