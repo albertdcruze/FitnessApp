@@ -17,6 +17,9 @@
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
             <views:DashboardView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GoalViewModel}">
+            <views:GoalView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:AuthenticatedRoutePlaceholderViewModel}">
             <views:AuthenticatedRoutePlaceholderView />
         </DataTemplate>

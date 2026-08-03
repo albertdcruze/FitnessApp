@@ -45,6 +45,9 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
     private string _statusMessage = string.Empty;
 
     [ObservableProperty]
+    private string _navigationMessage = string.Empty;
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
@@ -171,6 +174,7 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
 
     Task INavigationAware.OnNavigatedToAsync()
     {
+        NavigationMessage = _navigationService.CurrentStatusMessage ?? string.Empty;
         return RefreshCommand.ExecuteAsync(null);
     }
 
@@ -211,6 +215,7 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
         ProgressBarValue = 0;
         IsGoalAchieved = false;
         StatusMessage = string.Empty;
+        NavigationMessage = string.Empty;
         ErrorMessage = string.Empty;
         HasLoaded = false;
     }

@@ -30,6 +30,7 @@ public partial class App : Application
             var goalRepository = new GoalRepository(connectionString);
             var activityRepository = new ActivityRepository(connectionString);
             var authenticationService = new AuthenticationService(userRepository);
+            var goalService = new GoalService(goalRepository);
             var progressService = new ProgressService(goalRepository, activityRepository);
             var navigationService = new NavigationService();
 
@@ -46,11 +47,11 @@ public partial class App : Application
                 navigationService,
                 static () => DateTimeOffset.UtcNow,
                 TimeZoneInfo.Local);
-            var goalViewModel = new AuthenticatedRoutePlaceholderViewModel(
-                AppRoute.Goal,
-                "Set Daily Goal",
+            var goalViewModel = new GoalViewModel(
                 authenticationService,
-                navigationService);
+                goalService,
+                navigationService,
+                static () => DateTimeOffset.UtcNow);
             var recordActivityViewModel = new AuthenticatedRoutePlaceholderViewModel(
                 AppRoute.RecordActivity,
                 "Record Activity",

@@ -40,6 +40,9 @@
             <TextBlock Text="{Binding StatusMessage}"
                        Foreground="ForestGreen"
                        TextWrapping="Wrap" />
+            <TextBlock Text="{Binding NavigationMessage}"
+                       Foreground="ForestGreen"
+                       TextWrapping="Wrap" />
             <TextBlock Text="Loading your progress..."
                        IsVisible="{Binding IsBusy}" />
 

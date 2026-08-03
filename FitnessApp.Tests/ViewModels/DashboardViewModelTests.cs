@@ -114,6 +114,31 @@ public sealed class DashboardViewModelTests
         Assert.False(fixture.Dashboard.ShowNoGoalPrompt);
     }
 
+    [Fact]
+    public async Task ActivationCopiesNavigationMessageWithoutReplacingProgressStatus()
+    {
+        await using var fixture = await DashboardFixture.CreateAsync();
+        await fixture.Database.Goals.SaveAsync(new FitnessGoal(
+            fixture.User.UserId,
+            300,
+            FixedUtcNow));
+        fixture.NavigationService.Navigate(
+            AppRoute.Dashboard,
+            "Daily calorie goal saved.");
+
+        await fixture.RefreshAsync();
+
+        Assert.Equal("Daily calorie goal saved.", fixture.Dashboard.NavigationMessage);
+        Assert.Equal("Goal not achieved yet.", fixture.Dashboard.StatusMessage);
+
+        fixture.NavigationService.Navigate(AppRoute.Goal);
+        fixture.NavigationService.Navigate(AppRoute.Dashboard);
+        await fixture.RefreshAsync();
+
+        Assert.Empty(fixture.Dashboard.NavigationMessage);
+        Assert.Equal("Goal not achieved yet.", fixture.Dashboard.StatusMessage);
+    }
+
     [Theory]
     [InlineData(120, 180, 40, 40, false, "Goal not achieved yet.")]
     [InlineData(300, 0, 100, 100, true, "Goal achieved.")]
@@ -369,6 +394,7 @@ public sealed class DashboardViewModelTests
         Assert.Equal(AppRoute.Login, fixture.NavigationService.CurrentRoute);
         Assert.False(fixture.Dashboard.HasLoaded);
         Assert.Empty(fixture.Dashboard.Username);
+        Assert.Empty(fixture.Dashboard.NavigationMessage);
         Assert.Equal(1, await CountRowsAsync(fixture.Database, "Users"));
         Assert.Equal(1, await CountRowsAsync(fixture.Database, "FitnessGoals"));
         Assert.Equal(1, await CountRowsAsync(fixture.Database, "ActivityRecords"));
