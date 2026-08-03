@@ -1,0 +1,122 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitnessApp.ViewModels"
+             xmlns:shad="using:ShadUI"
+             x:Class="FitnessApp.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24"
+                    Spacing="16">
+            <Grid ColumnDefinitions="*,Auto,Auto"
+                  ColumnSpacing="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Dashboard"
+                               FontSize="26"
+                               FontWeight="Bold" />
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="4">
+                        <TextBlock Text="Welcome,"
+                                   FontSize="18" />
+                        <TextBlock Text="{Binding Username}"
+                                   FontSize="18" />
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Column="1"
+                        Content="Refresh"
+                        Classes="secondary"
+                        Command="{Binding RefreshCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+                <Button Grid.Column="2"
+                        Content="Log out"
+                        Classes="secondary"
+                        Command="{Binding LogoutCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+            </Grid>
+
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="IndianRed"
+                       TextWrapping="Wrap" />
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="ForestGreen"
+                       TextWrapping="Wrap" />
+            <TextBlock Text="Loading your progress..."
+                       IsVisible="{Binding IsBusy}" />
+
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="12">
+                <shad:Card Grid.Column="0"
+                           HasShadow="True">
+                    <StackPanel Margin="16"
+                                Spacing="4">
+                        <TextBlock Text="Calories burned"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding TotalCalories, StringFormat='{}{0:0.##}'}"
+                                   FontSize="24" />
+                    </StackPanel>
+                </shad:Card>
+                <shad:Card Grid.Column="1"
+                           HasShadow="True"
+                           IsVisible="{Binding HasGoal}">
+                    <StackPanel Margin="16"
+                                Spacing="4">
+                        <TextBlock Text="Daily target"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding TargetCalories, StringFormat='{}{0:0.##}'}"
+                                   FontSize="24" />
+                    </StackPanel>
+                </shad:Card>
+                <shad:Card Grid.Column="2"
+                           HasShadow="True"
+                           IsVisible="{Binding HasGoal}">
+                    <StackPanel Margin="16"
+                                Spacing="4">
+                        <TextBlock Text="Remaining"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding RemainingCalories, StringFormat='{}{0:0.##}'}"
+                                   FontSize="24" />
+                    </StackPanel>
+                </shad:Card>
+            </Grid>
+
+            <shad:Card HasShadow="True"
+                       IsVisible="{Binding ShowGoalProgress}">
+                <StackPanel Margin="16"
+                            Spacing="10">
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontWeight="Bold" />
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="4">
+                        <TextBlock Text="Progress:"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}'}" />
+                        <TextBlock Text="%" />
+                    </StackPanel>
+                    <ProgressBar Minimum="0"
+                                 Maximum="100"
+                                 Height="18"
+                                 Value="{Binding ProgressBarValue}" />
+                </StackPanel>
+            </shad:Card>
+
+            <shad:Card HasShadow="True"
+                       IsVisible="{Binding ShowNoGoalPrompt}">
+                <TextBlock Margin="16"
+                           Text="Set a daily calorie goal to track your progress."
+                           TextWrapping="Wrap" />
+            </shad:Card>
+
+            <StackPanel Orientation="Horizontal"
+                        Spacing="8">
+                <Button Content="Set Goal"
+                        Classes="primary"
+                        Command="{Binding NavigateToGoalCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+                <Button Content="Record Activity"
+                        Classes="secondary"
+                        Command="{Binding NavigateToRecordActivityCommand}"
+                        IsEnabled="{Binding !IsBusy}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

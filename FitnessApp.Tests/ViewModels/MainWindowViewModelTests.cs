@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FitnessApp.Common;
 using FitnessApp.Repositories;
 using FitnessApp.Services;
@@ -113,6 +114,42 @@ public sealed class MainWindowViewModelTests
             new MainWindowViewModel(graph.NavigationService, null!));
     }
 
+    [Fact]
+    public async Task NavigationAwareViewModelsAreActivatedAndTheirTasksAreTracked()
+    {
+        var graph = CreateViewModelGraph();
+        var navigationAwareViewModel = new NavigationAwareTestViewModel();
+        var routeViewModels = new Dictionary<AppRoute, ViewModelBase>(graph.RouteViewModels)
+        {
+            [AppRoute.Dashboard] = navigationAwareViewModel
+        };
+        var mainWindowViewModel = new MainWindowViewModel(
+            graph.NavigationService,
+            routeViewModels);
+
+        graph.NavigationService.Navigate(AppRoute.Dashboard);
+
+        var firstActivationTask = mainWindowViewModel.CurrentActivationTask;
+        Assert.Equal(1, navigationAwareViewModel.ActivationCount);
+        Assert.Same(navigationAwareViewModel.PendingTask, firstActivationTask);
+        Assert.False(firstActivationTask.IsCompleted);
+
+        navigationAwareViewModel.CompleteActivation();
+        await firstActivationTask;
+
+        graph.NavigationService.Navigate(AppRoute.Goal);
+        Assert.Equal(1, navigationAwareViewModel.ActivationCount);
+        Assert.Same(Task.CompletedTask, mainWindowViewModel.CurrentActivationTask);
+
+        graph.NavigationService.Navigate(AppRoute.Dashboard);
+
+        var secondActivationTask = mainWindowViewModel.CurrentActivationTask;
+        Assert.Equal(2, navigationAwareViewModel.ActivationCount);
+        Assert.NotSame(firstActivationTask, secondActivationTask);
+        navigationAwareViewModel.CompleteActivation();
+        await secondActivationTask;
+    }
+
     private static ViewModelGraph CreateViewModelGraph()
     {
         var authenticationService = new AuthenticationService(
@@ -167,4 +204,26 @@ public sealed class MainWindowViewModelTests
         AuthenticatedRoutePlaceholderViewModel GoalViewModel,
         AuthenticatedRoutePlaceholderViewModel RecordActivityViewModel,
         IReadOnlyDictionary<AppRoute, ViewModelBase> RouteViewModels);
+
+    private sealed class NavigationAwareTestViewModel : ViewModelBase, INavigationAware
+    {
+        private TaskCompletionSource<bool>? _completionSource;
+
+        public int ActivationCount { get; private set; }
+
+        public Task PendingTask => _completionSource?.Task ?? Task.CompletedTask;
+
+        public Task OnNavigatedToAsync()
+        {
+            ActivationCount++;
+            _completionSource = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+            return _completionSource.Task;
+        }
+
+        public void CompleteActivation()
+        {
+            _completionSource!.SetResult(true);
+        }
+    }
 }

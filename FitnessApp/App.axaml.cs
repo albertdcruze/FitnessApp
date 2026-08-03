@@ -27,7 +27,10 @@ public partial class App : Application
         {
             var connectionString = InitializeDatabase();
             var userRepository = new UserRepository(connectionString);
+            var goalRepository = new GoalRepository(connectionString);
+            var activityRepository = new ActivityRepository(connectionString);
             var authenticationService = new AuthenticationService(userRepository);
+            var progressService = new ProgressService(goalRepository, activityRepository);
             var navigationService = new NavigationService();
 
             var loginViewModel = new LoginViewModel(
@@ -37,11 +40,12 @@ public partial class App : Application
             var registerViewModel = new RegisterViewModel(
                 authenticationService,
                 navigationService);
-            var dashboardViewModel = new AuthenticatedRoutePlaceholderViewModel(
-                AppRoute.Dashboard,
-                "Dashboard",
+            var dashboardViewModel = new DashboardViewModel(
                 authenticationService,
-                navigationService);
+                progressService,
+                navigationService,
+                static () => DateTimeOffset.UtcNow,
+                TimeZoneInfo.Local);
             var goalViewModel = new AuthenticatedRoutePlaceholderViewModel(
                 AppRoute.Goal,
                 "Set Daily Goal",

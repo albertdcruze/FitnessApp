@@ -14,6 +14,9 @@
         <DataTemplate DataType="{x:Type vm:RegisterViewModel}">
             <views:RegisterView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:AuthenticatedRoutePlaceholderViewModel}">
             <views:AuthenticatedRoutePlaceholderView />
         </DataTemplate>
