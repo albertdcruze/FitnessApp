@@ -85,6 +85,7 @@ public partial class App : Application
             {
                 DataContext = new MainWindowViewModel(
                     navigationService,
+                    authenticationService,
                     routeViewModels),
             };
         }

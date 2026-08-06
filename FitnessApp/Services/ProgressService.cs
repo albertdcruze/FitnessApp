@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FitnessApp.Common;
 using FitnessApp.Models;
@@ -84,6 +85,21 @@ public sealed class ProgressService
             : CreateGoalSummary(goal, totalCalories);
 
         return OperationResult<ProgressSummary>.Success(summary);
+    }
+
+    public Task<IReadOnlyList<ActivityRecord>> GetActivitiesAsync(
+        long userId,
+        DateTimeOffset startUtc,
+        DateTimeOffset endUtc)
+    {
+        return _activityRepository.GetForUserInRangeAsync(userId, startUtc, endUtc);
+    }
+
+    public Task<IReadOnlyList<ActivityRecord>> GetRecentActivitiesAsync(
+        long userId,
+        int limit)
+    {
+        return _activityRepository.GetMostRecentAsync(userId, limit);
     }
 
     private static OperationResult<(DateTimeOffset StartUtc, DateTimeOffset EndUtc)> GetUtcDayRange(

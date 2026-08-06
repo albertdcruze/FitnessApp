@@ -3,76 +3,148 @@
              xmlns:vm="using:FitnessApp.ViewModels"
              xmlns:shad="using:ShadUI"
              xmlns:converters="using:Avalonia.Data.Converters"
+             xmlns:input="using:Avalonia.Input"
              x:Class="FitnessApp.Views.LoginView"
              x:DataType="vm:LoginViewModel">
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                   VerticalScrollBarVisibility="Auto"
                   HorizontalContentAlignment="Stretch"
-                  VerticalContentAlignment="Center">
+                  VerticalContentAlignment="Stretch"
+                  Background="{DynamicResource WindowBackgroundColor}">
         <Grid Margin="24"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Center">
-            <shad:Card MaxWidth="460"
-                       HorizontalAlignment="Center"
-                       HasShadow="False">
-                <StackPanel MinWidth="280"
-                            MaxWidth="400"
-                            Margin="28"
-                            HorizontalAlignment="Stretch"
-                            Spacing="14">
-                <TextBlock Text="FitnessApp"
-                           Classes="section-title" />
-                <TextBlock Text="Sign in"
-                           Classes="page-title" />
-                <TextBlock Text="Use your FitnessApp account to continue."
-                           Classes="muted"
+              HorizontalAlignment="Stretch">
+            <StackPanel MaxWidth="374"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Spacing="24">
+                <TextBlock Text="FITNESS APP"
+                           FontSize="48"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource ForegroundColor}"
+                           TextAlignment="Center"
                            TextWrapping="Wrap" />
 
-                <TextBlock Text="Username"
-                           Classes="field-label" />
-                <TextBox Text="{Binding Username, Mode=TwoWay}"
-                         AutomationProperties.Name="Username"
-                         AutomationProperties.HelpText="Enter your FitnessApp username." />
+                <shad:Card HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           HorizontalContentAlignment="Stretch"
+                           VerticalContentAlignment="Top"
+                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                           ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                           HasShadow="True">
+                    <shad:Card.Header>
+                        <StackPanel Spacing="6">
+                            <shad:CardTitle FontSize="30"
+                                            FontWeight="Bold">
+                                Welcome Back
+                            </shad:CardTitle>
+                            <shad:CardDescription>
+                                <TextBlock Text="Sign in to continue to your fitness account."
+                                           TextWrapping="Wrap" />
+                            </shad:CardDescription>
+                        </StackPanel>
+                    </shad:Card.Header>
 
-                <TextBlock Text="Password"
-                           Classes="field-label" />
-                <TextBox PasswordChar="*"
-                         Text="{Binding Password, Mode=TwoWay}"
-                         AutomationProperties.Name="Password"
-                         AutomationProperties.HelpText="Enter your FitnessApp password." />
+                    <StackPanel Spacing="16">
+                        <Border Background="{DynamicResource ErrorColor10}"
+                                BorderBrush="{DynamicResource ErrorColor}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource LgCornerRadius}"
+                                Padding="10"
+                                IsVisible="{Binding ErrorMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
+                            <TextBlock Text="{Binding ErrorMessage}"
+                                       FontSize="14"
+                                       Foreground="{DynamicResource ErrorColor}"
+                                       TextWrapping="Wrap" />
+                        </Border>
 
-                <Border Classes="message-error"
-                        IsVisible="{Binding ErrorMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
-                    <TextBlock Text="{Binding ErrorMessage}"
-                               Classes="message-error"
-                               TextWrapping="Wrap" />
-                </Border>
-                <Border Classes="message-success"
-                        IsVisible="{Binding StatusMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
-                    <TextBlock Text="{Binding StatusMessage}"
-                               Classes="message-success"
-                               TextWrapping="Wrap" />
-                </Border>
+                        <Border Background="{DynamicResource SuccessColor10}"
+                                BorderBrush="{DynamicResource SuccessColor}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource LgCornerRadius}"
+                                Padding="10"
+                                IsVisible="{Binding StatusMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
+                            <TextBlock Text="{Binding StatusMessage}"
+                                       FontSize="14"
+                                       Foreground="{DynamicResource SuccessColor}"
+                                       TextWrapping="Wrap" />
+                        </Border>
 
-                <Button Content="Sign in"
-                        Classes="Primary"
-                        IsDefault="True"
-                        Command="{Binding LoginCommand}"
-                        IsEnabled="{Binding !IsBusy}"
-                        HorizontalAlignment="Stretch" />
-                <Button Content="Create an account"
-                        Classes="Secondary"
-                        Command="{Binding GoToRegisterCommand}"
-                        IsEnabled="{Binding !IsBusy}"
-                        HorizontalAlignment="Stretch" />
+                        <TextBox Text="{Binding Username, Mode=TwoWay}"
+                                 MinHeight="36"
+                                 Padding="12,4"
+                                 FontSize="14"
+                                 Background="{DynamicResource SelectionColor}"
+                                 BorderBrush="{DynamicResource BorderColor}"
+                                 Foreground="{DynamicResource ForegroundColor}"
+                                 shad:ControlAssist.Label="Username"
+                                 AutomationProperties.Name="Username"
+                                 AutomationProperties.HelpText="Enter your FitnessApp username."
+                                 input:KeyboardNavigation.TabIndex="1" />
 
-                <TextBlock Text="Signing in..."
-                           Classes="muted"
-                           HorizontalAlignment="Center"
-                           IsVisible="{Binding IsBusy}" />
-                </StackPanel>
-            </shad:Card>
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Password"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           Foreground="{DynamicResource ForegroundColor}" />
+                                <ToggleButton Grid.Column="1"
+                                              Classes="Default NoPressedAnimation"
+                                              Content="{Binding PasswordVisibilityActionText}"
+                                              IsChecked="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                              MinHeight="20"
+                                              Height="20"
+                                              Padding="0"
+                                              BorderThickness="0"
+                                              Background="{DynamicResource BackgroundColor}"
+                                              Foreground="{DynamicResource ForegroundColor}"
+                                              FontSize="14"
+                                              AutomationProperties.Name="{Binding PasswordVisibilityActionText}"
+                                              AutomationProperties.HelpText="Show or hide the entered password."
+                                              input:KeyboardNavigation.TabIndex="2" />
+                            </Grid>
+                            <TextBox PasswordChar="•"
+                                     RevealPassword="{Binding IsPasswordVisible}"
+                                     Text="{Binding Password, Mode=TwoWay}"
+                                     MinHeight="36"
+                                     Padding="12,4"
+                                     FontSize="14"
+                                     Background="{DynamicResource SelectionColor}"
+                                     BorderBrush="{DynamicResource BorderColor}"
+                                     Foreground="{DynamicResource ForegroundColor}"
+                                     AutomationProperties.Name="Password"
+                                     AutomationProperties.HelpText="Enter your FitnessApp password."
+                                     input:KeyboardNavigation.TabIndex="3" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <shad:Card.Footer>
+                        <StackPanel Spacing="8">
+                            <Button Content="Sign In"
+                                    Classes="Primary"
+                                    IsDefault="True"
+                                    Command="{Binding LoginCommand}"
+                                    IsEnabled="{Binding !IsBusy}"
+                                    MinHeight="36"
+                                    Height="36"
+                                    Padding="16,8"
+                                    HorizontalAlignment="Stretch"
+                                    shad:ButtonAssist.ShowProgress="{Binding IsBusy}"
+                                    input:KeyboardNavigation.TabIndex="4" />
+                            <Button Content="Create Account"
+                                    Classes="Secondary"
+                                    Command="{Binding GoToRegisterCommand}"
+                                    IsEnabled="{Binding !IsBusy}"
+                                    MinHeight="36"
+                                    Height="36"
+                                    Padding="16,8"
+                                    HorizontalAlignment="Stretch"
+                                    input:KeyboardNavigation.TabIndex="5" />
+                        </StackPanel>
+                    </shad:Card.Footer>
+                </shad:Card>
+            </StackPanel>
         </Grid>
     </ScrollViewer>
 </UserControl>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FitnessApp.Common;
 using FitnessApp.Repositories;
 using FitnessApp.Services;
+using FitnessApp.Tests.Data;
 using FitnessApp.ViewModels;
 using Xunit;
 
@@ -14,7 +15,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public void Constructor_UsesTheConfiguredLoginViewModel()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
 
         var mainWindowViewModel = new MainWindowViewModel(
             graph.NavigationService,
@@ -27,7 +28,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public void Navigation_SelectsExistingRouteViewModelsAndReusesLogin()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
         var mainWindowViewModel = new MainWindowViewModel(
             graph.NavigationService,
             graph.RouteViewModels);
@@ -56,7 +57,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public void Navigation_RaisesPropertyChangedForTheRouteAndCurrentViewModel()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
         var mainWindowViewModel = new MainWindowViewModel(
             graph.NavigationService,
             graph.RouteViewModels);
@@ -73,7 +74,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public void SameRouteWithANewStatusMessage_DoesNotReplaceTheCurrentViewModel()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
         var mainWindowViewModel = new MainWindowViewModel(
             graph.NavigationService,
             graph.RouteViewModels);
@@ -87,7 +88,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public void Constructor_RejectsAMissingRouteMapping()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
         var incompleteRouteMap = new Dictionary<AppRoute, ViewModelBase>
         {
             [AppRoute.Login] = graph.LoginViewModel,
@@ -106,7 +107,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public void Constructor_RejectsNullDependencies()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
 
         Assert.Throws<ArgumentNullException>(() =>
             new MainWindowViewModel(null!, graph.RouteViewModels));
@@ -117,7 +118,7 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public async Task NavigationAwareViewModelsAreActivatedAndTheirTasksAreTracked()
     {
-        var graph = CreateViewModelGraph();
+        using var graph = CreateViewModelGraph();
         var navigationAwareViewModel = new NavigationAwareTestViewModel();
         var routeViewModels = new Dictionary<AppRoute, ViewModelBase>(graph.RouteViewModels)
         {
@@ -150,10 +151,91 @@ public sealed class MainWindowViewModelTests
         await secondActivationTask;
     }
 
+    [Fact]
+    public void AuthenticatedShellPresentationPropertiesFollowTheCurrentRoute()
+    {
+        using var graph = CreateViewModelGraph();
+        var mainWindowViewModel = new MainWindowViewModel(
+            graph.NavigationService,
+            graph.AuthenticationService,
+            graph.RouteViewModels);
+
+        Assert.True(mainWindowViewModel.IsAuthenticationRoute);
+        Assert.False(mainWindowViewModel.IsAuthenticatedRoute);
+
+        graph.NavigationService.Navigate(AppRoute.Register);
+        Assert.True(mainWindowViewModel.IsAuthenticationRoute);
+        Assert.False(mainWindowViewModel.IsAuthenticatedRoute);
+
+        graph.NavigationService.Navigate(AppRoute.Dashboard);
+        Assert.False(mainWindowViewModel.IsAuthenticationRoute);
+        Assert.True(mainWindowViewModel.IsAuthenticatedRoute);
+        Assert.True(mainWindowViewModel.IsDashboardActive);
+        Assert.False(mainWindowViewModel.IsGoalActive);
+        Assert.False(mainWindowViewModel.IsRecordActivityActive);
+
+        graph.NavigationService.Navigate(AppRoute.Goal);
+        Assert.True(mainWindowViewModel.IsGoalActive);
+        Assert.False(mainWindowViewModel.IsDashboardActive);
+
+        graph.NavigationService.Navigate(AppRoute.RecordActivity);
+        Assert.True(mainWindowViewModel.IsRecordActivityActive);
+        Assert.False(mainWindowViewModel.IsGoalActive);
+    }
+
+    [Fact]
+    public void SidebarCommandsNavigateUsingTheExistingNavigationService()
+    {
+        using var graph = CreateViewModelGraph();
+        var mainWindowViewModel = new MainWindowViewModel(
+            graph.NavigationService,
+            graph.AuthenticationService,
+            graph.RouteViewModels);
+
+        mainWindowViewModel.NavigateDashboardCommand.Execute(null);
+        Assert.Equal(AppRoute.Dashboard, graph.NavigationService.CurrentRoute);
+
+        mainWindowViewModel.NavigateGoalCommand.Execute(null);
+        Assert.Equal(AppRoute.Goal, graph.NavigationService.CurrentRoute);
+
+        mainWindowViewModel.NavigateRecordActivityCommand.Execute(null);
+        Assert.Equal(AppRoute.RecordActivity, graph.NavigationService.CurrentRoute);
+    }
+
+    [Fact]
+    public async Task ShellLogoutClearsTheSharedSessionAndNavigatesToLogin()
+    {
+        using var graph = CreateViewModelGraph();
+        var registration = await graph.AuthenticationService.RegisterAsync(
+            "Task12Shell",
+            "FitTask12Abc");
+        Assert.True(registration.IsSuccess);
+
+        var login = await graph.AuthenticationService.LoginAsync(
+            "Task12Shell",
+            "FitTask12Abc",
+            DateTimeOffset.UtcNow);
+        Assert.True(login.IsSuccess);
+
+        var mainWindowViewModel = new MainWindowViewModel(
+            graph.NavigationService,
+            graph.AuthenticationService,
+            graph.RouteViewModels);
+        graph.NavigationService.Navigate(AppRoute.Dashboard);
+
+        Assert.Equal("Task12Shell", mainWindowViewModel.AuthenticatedUsername);
+
+        mainWindowViewModel.ShellLogoutCommand.Execute(null);
+
+        Assert.Null(graph.AuthenticationService.CurrentUser);
+        Assert.Equal(AppRoute.Login, graph.NavigationService.CurrentRoute);
+        Assert.Equal(string.Empty, mainWindowViewModel.AuthenticatedUsername);
+    }
+
     private static ViewModelGraph CreateViewModelGraph()
     {
-        var authenticationService = new AuthenticationService(
-            new UserRepository("Data Source=:memory:"));
+        var database = RepositoryTestDatabase.CreateAsync().GetAwaiter().GetResult();
+        var authenticationService = new AuthenticationService(database.Users);
         var navigationService = new NavigationService();
         var loginViewModel = new LoginViewModel(
             authenticationService,
@@ -181,7 +263,9 @@ public sealed class MainWindowViewModelTests
         };
 
         return new ViewModelGraph(
+            database,
             navigationService,
+            authenticationService,
             loginViewModel,
             registerViewModel,
             dashboardViewModel,
@@ -191,13 +275,21 @@ public sealed class MainWindowViewModelTests
     }
 
     private sealed record ViewModelGraph(
+        RepositoryTestDatabase Database,
         NavigationService NavigationService,
+        AuthenticationService AuthenticationService,
         LoginViewModel LoginViewModel,
         RegisterViewModel RegisterViewModel,
         RouteTestViewModel DashboardViewModel,
         RouteTestViewModel GoalViewModel,
         RouteTestViewModel RecordActivityViewModel,
-        IReadOnlyDictionary<AppRoute, ViewModelBase> RouteViewModels);
+        IReadOnlyDictionary<AppRoute, ViewModelBase> RouteViewModels) : IDisposable
+    {
+        public void Dispose()
+        {
+            Database.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        }
+    }
 
     private sealed class NavigationAwareTestViewModel : ViewModelBase, INavigationAware
     {

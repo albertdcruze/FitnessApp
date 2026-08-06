@@ -44,6 +44,7 @@ public sealed class RegisterViewModelTests
         navigationService.Navigate(AppRoute.Register);
         registerViewModel.Username = "RegisterUser01";
         registerViewModel.Password = Password;
+        registerViewModel.ConfirmPassword = Password;
 
         await registerViewModel.RegisterCommand.ExecuteAsync(null);
 
@@ -52,6 +53,7 @@ public sealed class RegisterViewModelTests
         Assert.NotNull(persistedUser);
         Assert.Equal(AppRoute.Login, navigationService.CurrentRoute);
         Assert.Equal(string.Empty, registerViewModel.Password);
+        Assert.Equal(string.Empty, registerViewModel.ConfirmPassword);
         Assert.Equal(
             "Registration successful. You can now sign in.",
             registerViewModel.StatusMessage);
@@ -66,6 +68,37 @@ public sealed class RegisterViewModelTests
     }
 
     [Fact]
+    public async Task RegisterCommand_RejectsMismatchedPasswordsWithoutWriting()
+    {
+        await using var database = await RepositoryTestDatabase.CreateAsync();
+        var authenticationService = new AuthenticationService(database.Users);
+        var navigationService = new NavigationService();
+        var viewModel = new RegisterViewModel(authenticationService, navigationService);
+        var registrationReachedInsert = false;
+        authenticationService.BeforeRegistrationInsertAsync = () =>
+        {
+            registrationReachedInsert = true;
+            return Task.CompletedTask;
+        };
+        navigationService.Navigate(AppRoute.Register);
+        viewModel.Username = "MismatchUser01";
+        viewModel.Password = "FitnessPass1";
+        viewModel.ConfirmPassword = "FitnessPass2";
+
+        await viewModel.RegisterCommand.ExecuteAsync(null);
+
+        Assert.Equal(AppRoute.Register, navigationService.CurrentRoute);
+        Assert.Equal("Passwords do not match.", viewModel.ErrorMessage);
+        Assert.Equal("MismatchUser01", viewModel.Username);
+        Assert.Equal("FitnessPass1", viewModel.Password);
+        Assert.Equal("FitnessPass2", viewModel.ConfirmPassword);
+        Assert.False(registrationReachedInsert);
+        Assert.Equal(0, await CountUsersAsync(database));
+        Assert.Null(authenticationService.CurrentUser);
+        Assert.False(viewModel.IsBusy);
+    }
+
+    [Fact]
     public async Task RegisterCommand_ExposesDuplicateUsernameWithoutAuthenticating()
     {
         await using var database = await RepositoryTestDatabase.CreateAsync();
@@ -76,6 +109,7 @@ public sealed class RegisterViewModelTests
         navigationService.Navigate(AppRoute.Register);
         viewModel.Username = "duplicateuser01";
         viewModel.Password = Password;
+        viewModel.ConfirmPassword = Password;
 
         await viewModel.RegisterCommand.ExecuteAsync(null);
 
@@ -83,6 +117,7 @@ public sealed class RegisterViewModelTests
         Assert.Equal("Username already exists.", viewModel.ErrorMessage);
         Assert.Equal("duplicateuser01", viewModel.Username);
         Assert.Equal(Password, viewModel.Password);
+        Assert.Equal(Password, viewModel.ConfirmPassword);
         Assert.Equal(1, await CountUsersAsync(database));
         Assert.Null(authenticationService.CurrentUser);
         Assert.False(viewModel.IsBusy);
@@ -98,6 +133,7 @@ public sealed class RegisterViewModelTests
         navigationService.Navigate(AppRoute.Register);
         viewModel.Username = "Invalid_User";
         viewModel.Password = Password;
+        viewModel.ConfirmPassword = Password;
 
         await viewModel.RegisterCommand.ExecuteAsync(null);
 
@@ -105,6 +141,7 @@ public sealed class RegisterViewModelTests
         Assert.Equal("Username can contain letters and numbers only.", viewModel.ErrorMessage);
         Assert.Equal("Invalid_User", viewModel.Username);
         Assert.Equal(Password, viewModel.Password);
+        Assert.Equal(Password, viewModel.ConfirmPassword);
         Assert.Equal(0, await CountUsersAsync(database));
         Assert.False(viewModel.IsBusy);
     }
@@ -119,6 +156,7 @@ public sealed class RegisterViewModelTests
         navigationService.Navigate(AppRoute.Register);
         viewModel.Username = "PasswordUser01";
         viewModel.Password = "short";
+        viewModel.ConfirmPassword = "short";
 
         await viewModel.RegisterCommand.ExecuteAsync(null);
 
@@ -126,6 +164,7 @@ public sealed class RegisterViewModelTests
         Assert.Equal("Password must be exactly 12 characters.", viewModel.ErrorMessage);
         Assert.Equal("PasswordUser01", viewModel.Username);
         Assert.Equal("short", viewModel.Password);
+        Assert.Equal("short", viewModel.ConfirmPassword);
         Assert.Equal(0, await CountUsersAsync(database));
         Assert.False(viewModel.IsBusy);
     }
@@ -141,6 +180,7 @@ public sealed class RegisterViewModelTests
         await DropUsersTableAsync(database);
         viewModel.Username = "TechnicalUser01";
         viewModel.Password = Password;
+        viewModel.ConfirmPassword = Password;
 
         await viewModel.RegisterCommand.ExecuteAsync(null);
 
@@ -150,6 +190,7 @@ public sealed class RegisterViewModelTests
             viewModel.ErrorMessage);
         Assert.Equal("TechnicalUser01", viewModel.Username);
         Assert.Equal(string.Empty, viewModel.Password);
+        Assert.Equal(string.Empty, viewModel.ConfirmPassword);
         Assert.DoesNotContain("SQLite", viewModel.ErrorMessage, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(database.ConnectionString, viewModel.ErrorMessage, StringComparison.Ordinal);
         Assert.False(viewModel.IsBusy);
@@ -194,6 +235,7 @@ public sealed class RegisterViewModelTests
         navigationService.Navigate(AppRoute.Register);
         viewModel.Username = "ConcurrentUser01";
         viewModel.Password = Password;
+        viewModel.ConfirmPassword = Password;
 
         Assert.IsAssignableFrom<IAsyncRelayCommand>(viewModel.RegisterCommand);
         var firstExecution = viewModel.RegisterCommand.ExecuteAsync(null);
@@ -207,6 +249,8 @@ public sealed class RegisterViewModelTests
         Assert.Equal(1, await CountUsersAsync(database));
         Assert.False(viewModel.IsBusy);
         Assert.Equal(AppRoute.Login, navigationService.CurrentRoute);
+        Assert.Equal(string.Empty, viewModel.Password);
+        Assert.Equal(string.Empty, viewModel.ConfirmPassword);
     }
 
     private static async Task<long> CountUsersAsync(RepositoryTestDatabase database)

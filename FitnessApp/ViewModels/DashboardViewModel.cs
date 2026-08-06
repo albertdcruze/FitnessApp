@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FitnessApp.Common;
+using FitnessApp.Models;
 using FitnessApp.Services;
 
 namespace FitnessApp.ViewModels;
@@ -55,6 +59,23 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
 
     [ObservableProperty]
     private bool _hasLoaded;
+
+    [ObservableProperty]
+    private IReadOnlyList<RecentActivityItem> _recentActivities =
+        Array.Empty<RecentActivityItem>();
+
+    [ObservableProperty]
+    private IReadOnlyList<DailyCaloriePoint> _lastSevenDays =
+        Array.Empty<DailyCaloriePoint>();
+
+    [ObservableProperty]
+    private int _activitiesThisWeek;
+
+    [ObservableProperty]
+    private double _averageCaloriesThisWeek;
+
+    [ObservableProperty]
+    private bool _hasRecentActivities;
 
     public DashboardViewModel(
         AuthenticationService authenticationService,
@@ -115,8 +136,23 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
             var nowUtc = _utcNowProvider().ToUniversalTime();
             var localNow = TimeZoneInfo.ConvertTime(nowUtc, _timeZone);
             var localDate = DateOnly.FromDateTime(localNow.DateTime);
-            var result = await _progressService
+            var lastSevenDaysStart = localDate.AddDays(-6);
+            var thisWeekStart = localDate.AddDays(-GetDaysSinceMonday(localDate));
+            var rangeStartUtc = ConvertLocalStartToUtc(lastSevenDaysStart);
+            var rangeEndUtc = ConvertLocalStartToUtc(localDate.AddDays(1));
+
+            var progressTask = _progressService
                 .GetTodayProgressAsync(currentUser, localDate, _timeZone);
+            var activityRangeTask = _progressService.GetActivitiesAsync(
+                currentUser.UserId,
+                rangeStartUtc,
+                rangeEndUtc);
+            var recentActivityTask = _progressService.GetRecentActivitiesAsync(
+                currentUser.UserId,
+                5);
+
+            await Task.WhenAll(progressTask, activityRangeTask, recentActivityTask);
+            var result = await progressTask;
 
             if (!result.IsSuccess || result.Value is null)
             {
@@ -133,6 +169,25 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
             ProgressBarValue = Math.Clamp(summary.ProgressPercentage, 0, 100);
             IsGoalAchieved = summary.IsGoalAchieved;
             StatusMessage = summary.StatusMessage;
+
+            var activityRange = await activityRangeTask;
+            LastSevenDays = CreateDailyCaloriePoints(
+                activityRange,
+                lastSevenDaysStart,
+                localDate);
+
+            var thisWeekActivities = activityRange
+                .Where(record => GetLocalDate(record.RecordedAtUtc) >= thisWeekStart)
+                .ToArray();
+            ActivitiesThisWeek = thisWeekActivities.Length;
+            AverageCaloriesThisWeek = thisWeekActivities.Length == 0
+                ? 0
+                : thisWeekActivities.Average(record => record.CaloriesBurned);
+
+            RecentActivities = (await recentActivityTask)
+                .Select(CreateRecentActivityItem)
+                .ToArray();
+            HasRecentActivities = RecentActivities.Count > 0;
             ErrorMessage = string.Empty;
             HasLoaded = true;
         }
@@ -218,5 +273,92 @@ public partial class DashboardViewModel : ViewModelBase, INavigationAware
         NavigationMessage = string.Empty;
         ErrorMessage = string.Empty;
         HasLoaded = false;
+        RecentActivities = Array.Empty<RecentActivityItem>();
+        LastSevenDays = Array.Empty<DailyCaloriePoint>();
+        ActivitiesThisWeek = 0;
+        AverageCaloriesThisWeek = 0;
+        HasRecentActivities = false;
+    }
+
+    private static int GetDaysSinceMonday(DateOnly date)
+    {
+        return ((int)date.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+    }
+
+    private DateTimeOffset ConvertLocalStartToUtc(DateOnly localDate)
+    {
+        var localStart = localDate.ToDateTime(
+            TimeOnly.MinValue,
+            DateTimeKind.Unspecified);
+        return new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(localStart, _timeZone));
+    }
+
+    private DateOnly GetLocalDate(DateTimeOffset recordedAtUtc)
+    {
+        var localTime = TimeZoneInfo.ConvertTime(recordedAtUtc, _timeZone);
+        return DateOnly.FromDateTime(localTime.DateTime);
+    }
+
+    private IReadOnlyList<DailyCaloriePoint> CreateDailyCaloriePoints(
+        IReadOnlyList<ActivityRecord> records,
+        DateOnly firstDate,
+        DateOnly today)
+    {
+        var totalsByDate = records
+            .GroupBy(record => GetLocalDate(record.RecordedAtUtc))
+            .ToDictionary(
+                group => group.Key,
+                group => group.Sum(record => record.CaloriesBurned));
+
+        var totals = Enumerable.Range(0, 7)
+            .Select(offset =>
+            {
+                var date = firstDate.AddDays(offset);
+                return (Date: date, Total: totalsByDate.GetValueOrDefault(date));
+            })
+            .ToArray();
+        var maximum = totals.Max(point => point.Total);
+
+        return totals
+            .Select(point =>
+            {
+                var relativeHeight = maximum <= 0
+                    ? 0
+                    : Math.Max(point.Total / maximum * 112, point.Total > 0 ? 4 : 0);
+                var dayLabel = point.Date.ToString("ddd", CultureInfo.CurrentCulture);
+                var toolTipText = string.Format(
+                    CultureInfo.CurrentCulture,
+                    "{0:ddd, MMM d}: {1:0.##} estimated calories",
+                    point.Date.ToDateTime(TimeOnly.MinValue),
+                    point.Total);
+
+                return new DailyCaloriePoint(
+                    point.Date,
+                    dayLabel,
+                    point.Total,
+                    relativeHeight,
+                    point.Date == today,
+                    toolTipText);
+            })
+            .ToArray();
+    }
+
+    private RecentActivityItem CreateRecentActivityItem(ActivityRecord record)
+    {
+        var localTime = TimeZoneInfo.ConvertTime(record.RecordedAtUtc, _timeZone);
+        return new RecentActivityItem(
+            GetActivityName(record.ActivityType),
+            record.CaloriesBurned,
+            localTime.ToString("MMM d, yyyy h:mm tt", CultureInfo.CurrentCulture));
+    }
+
+    private static string GetActivityName(ActivityType activityType)
+    {
+        return activityType switch
+        {
+            ActivityType.StationaryRowing => "Stationary rowing",
+            ActivityType.StrengthTraining => "Strength training",
+            _ => activityType.ToString()
+        };
     }
 }

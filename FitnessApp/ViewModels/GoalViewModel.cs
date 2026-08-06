@@ -69,6 +69,14 @@ public partial class GoalViewModel : ViewModelBase, INavigationAware
 
     public bool ShowNoGoalPrompt => HasLoaded && !HasExistingGoal;
 
+    public bool IsPreset300Selected => GoalInput == "300";
+
+    public bool IsPreset500Selected => GoalInput == "500";
+
+    public bool IsPreset750Selected => GoalInput == "750";
+
+    public bool IsPreset1000Selected => GoalInput == "1000";
+
     // These hooks are no-op by default and exist only to make concurrency tests deterministic.
     internal Func<Task>? BeforeGoalLoadAsync { get; set; }
 
@@ -218,6 +226,17 @@ public partial class GoalViewModel : ViewModelBase, INavigationAware
     }
 
     [RelayCommand]
+    private void ApplyGoalPreset(string? preset)
+    {
+        if (IsBusy || string.IsNullOrEmpty(preset))
+        {
+            return;
+        }
+
+        GoalInput = preset;
+    }
+
+    [RelayCommand]
     private void Logout()
     {
         _authenticationService.Logout();
@@ -234,6 +253,14 @@ public partial class GoalViewModel : ViewModelBase, INavigationAware
     {
         OnPropertyChanged(nameof(ShowExistingGoal));
         OnPropertyChanged(nameof(ShowNoGoalPrompt));
+    }
+
+    partial void OnGoalInputChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsPreset300Selected));
+        OnPropertyChanged(nameof(IsPreset500Selected));
+        OnPropertyChanged(nameof(IsPreset750Selected));
+        OnPropertyChanged(nameof(IsPreset1000Selected));
     }
 
     partial void OnHasLoadedChanged(bool value)

@@ -29,4 +29,15 @@ public sealed class ActivityDefinition
     public string DisplayName { get; }
 
     public IReadOnlyList<ActivityMetricDefinition> Metrics { get; }
+
+    public string IconGlyph => ActivityType switch
+    {
+        ActivityType.Walking => "\uE21E",
+        ActivityType.Swimming => "\uE283",
+        ActivityType.Running => "\uE3BD",
+        ActivityType.Cycling => "\uE1D2",
+        ActivityType.StationaryRowing => "\uE640",
+        ActivityType.StrengthTraining => "\uE3A5",
+        _ => "\uE038"
+    };
 }

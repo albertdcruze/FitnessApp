@@ -33,6 +33,23 @@ public sealed class LoginViewModelTests
     }
 
     [Fact]
+    public void PasswordVisibilityState_UpdatesTheAccessibleActionText()
+    {
+        var authenticationService = new AuthenticationService(
+            new UserRepository("Data Source=:memory:"));
+        var navigationService = new NavigationService();
+        var viewModel = CreateViewModel(authenticationService, navigationService);
+
+        Assert.False(viewModel.IsPasswordVisible);
+        Assert.Equal("Show password", viewModel.PasswordVisibilityActionText);
+
+        viewModel.IsPasswordVisible = true;
+
+        Assert.True(viewModel.IsPasswordVisible);
+        Assert.Equal("Hide password", viewModel.PasswordVisibilityActionText);
+    }
+
+    [Fact]
     public async Task LoginCommand_SucceedsWithTheSharedAuthenticationSession()
     {
         await using var database = await RepositoryTestDatabase.CreateAsync();
@@ -51,6 +68,7 @@ public sealed class LoginViewModelTests
         Assert.Equal(registration.Value!.UserId, authenticationService.CurrentUser!.UserId);
         Assert.Equal("loginuser01", viewModel.Username);
         Assert.Equal(string.Empty, viewModel.Password);
+        Assert.False(viewModel.IsPasswordVisible);
         Assert.Equal(string.Empty, viewModel.ErrorMessage);
         Assert.False(viewModel.IsBusy);
     }
@@ -165,12 +183,14 @@ public sealed class LoginViewModelTests
         var viewModel = CreateViewModel(authenticationService, navigationService);
         viewModel.ErrorMessage = "Old error";
         viewModel.StatusMessage = "Old status";
+        viewModel.IsPasswordVisible = true;
 
         viewModel.GoToRegisterCommand.Execute(null);
 
         Assert.Equal(AppRoute.Register, navigationService.CurrentRoute);
         Assert.Equal(string.Empty, viewModel.ErrorMessage);
         Assert.Equal(string.Empty, viewModel.StatusMessage);
+        Assert.False(viewModel.IsPasswordVisible);
         Assert.False(viewModel.IsBusy);
     }
 

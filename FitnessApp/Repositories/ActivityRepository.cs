@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using FitnessApp.Models;
@@ -95,6 +96,82 @@ public sealed class ActivityRepository
         }
     }
 
+    public async Task<IReadOnlyList<ActivityRecord>> GetForUserInRangeAsync(
+        long userId,
+        DateTimeOffset startUtc,
+        DateTimeOffset endUtc)
+    {
+        try
+        {
+            await using var connection = await OpenConnectionAsync().ConfigureAwait(false);
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                SELECT
+                    ActivityRecordId,
+                    UserId,
+                    ActivityType,
+                    Metric1Value,
+                    Metric2Value,
+                    Metric3Value,
+                    CaloriesBurned,
+                    RecordedAtUtc
+                FROM ActivityRecords
+                WHERE UserId = $userId
+                  AND RecordedAtUtc >= $startUtc
+                  AND RecordedAtUtc < $endUtc
+                ORDER BY RecordedAtUtc ASC, ActivityRecordId ASC;
+                """;
+            command.Parameters.Add(CreateParameter("$userId", userId));
+            command.Parameters.Add(CreateParameter("$startUtc", FormatUtc(startUtc)));
+            command.Parameters.Add(CreateParameter("$endUtc", FormatUtc(endUtc)));
+
+            return await ReadActivityRecordsAsync(command).ConfigureAwait(false);
+        }
+        catch (SqliteException exception)
+        {
+            throw new InvalidOperationException("Unable to load activity records for the selected range.", exception);
+        }
+    }
+
+    public async Task<IReadOnlyList<ActivityRecord>> GetMostRecentAsync(
+        long userId,
+        int limit)
+    {
+        if (limit <= 0)
+        {
+            return Array.Empty<ActivityRecord>();
+        }
+
+        try
+        {
+            await using var connection = await OpenConnectionAsync().ConfigureAwait(false);
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                SELECT
+                    ActivityRecordId,
+                    UserId,
+                    ActivityType,
+                    Metric1Value,
+                    Metric2Value,
+                    Metric3Value,
+                    CaloriesBurned,
+                    RecordedAtUtc
+                FROM ActivityRecords
+                WHERE UserId = $userId
+                ORDER BY RecordedAtUtc DESC, ActivityRecordId DESC
+                LIMIT $limit;
+                """;
+            command.Parameters.Add(CreateParameter("$userId", userId));
+            command.Parameters.Add(CreateParameter("$limit", limit));
+
+            return await ReadActivityRecordsAsync(command).ConfigureAwait(false);
+        }
+        catch (SqliteException exception)
+        {
+            throw new InvalidOperationException("Unable to load recent activity records.", exception);
+        }
+    }
+
     private async Task<SqliteConnection> OpenConnectionAsync()
     {
         var connection = new SqliteConnection(_connectionString);
@@ -111,6 +188,39 @@ public sealed class ActivityRepository
             await connection.DisposeAsync().ConfigureAwait(false);
             throw;
         }
+    }
+
+    private static async Task<IReadOnlyList<ActivityRecord>> ReadActivityRecordsAsync(
+        SqliteCommand command)
+    {
+        var records = new List<ActivityRecord>();
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            var activityTypeText = reader.GetString(2);
+            if (!Enum.TryParse<ActivityType>(activityTypeText, out var activityType))
+            {
+                throw new InvalidOperationException("A stored activity type is not supported.");
+            }
+
+            var recordedAtUtc = DateTimeOffset.Parse(
+                reader.GetString(7),
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.RoundtripKind).ToUniversalTime();
+
+            records.Add(new ActivityRecord(
+                reader.GetInt64(0),
+                reader.GetInt64(1),
+                activityType,
+                reader.GetDouble(3),
+                reader.GetDouble(4),
+                reader.GetDouble(5),
+                reader.GetDouble(6),
+                recordedAtUtc));
+        }
+
+        return records;
     }
 
     private static SqliteParameter CreateParameter(string name, object? value)

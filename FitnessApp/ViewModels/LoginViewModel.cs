@@ -31,6 +31,12 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isBusy;
 
+    [ObservableProperty]
+    private bool _isPasswordVisible;
+
+    public string PasswordVisibilityActionText =>
+        IsPasswordVisible ? "Hide password" : "Show password";
+
     public LoginViewModel(
         AuthenticationService authenticationService,
         NavigationService navigationService,
@@ -71,6 +77,7 @@ public partial class LoginViewModel : ViewModelBase
                 .LoginAsync(Username, Password, nowUtc);
 
             Password = string.Empty;
+            IsPasswordVisible = false;
 
             if (result.IsSuccess)
             {
@@ -83,6 +90,7 @@ public partial class LoginViewModel : ViewModelBase
         catch (InvalidOperationException)
         {
             Password = string.Empty;
+            IsPasswordVisible = false;
             ErrorMessage = TechnicalFailureMessage;
         }
         finally
@@ -96,7 +104,13 @@ public partial class LoginViewModel : ViewModelBase
     {
         ErrorMessage = string.Empty;
         StatusMessage = string.Empty;
+        IsPasswordVisible = false;
         _navigationService.Navigate(AppRoute.Register);
+    }
+
+    partial void OnIsPasswordVisibleChanged(bool value)
+    {
+        OnPropertyChanged(nameof(PasswordVisibilityActionText));
     }
 
     private void OnNavigationChanged(object? sender, EventArgs eventArgs)

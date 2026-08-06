@@ -15,6 +15,9 @@ public partial class RegisterViewModel : ViewModelBase
     private const string TechnicalFailureMessage =
         "Unable to create the account right now. Please try again.";
 
+    private const string PasswordMismatchMessage =
+        "Passwords do not match.";
+
     private readonly AuthenticationService _authenticationService;
     private readonly NavigationService _navigationService;
 
@@ -25,6 +28,9 @@ public partial class RegisterViewModel : ViewModelBase
     private string _password = string.Empty;
 
     [ObservableProperty]
+    private string _confirmPassword = string.Empty;
+
+    [ObservableProperty]
     private string _errorMessage = string.Empty;
 
     [ObservableProperty]
@@ -32,6 +38,18 @@ public partial class RegisterViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isBusy;
+
+    [ObservableProperty]
+    private bool _isPasswordVisible;
+
+    [ObservableProperty]
+    private bool _isConfirmPasswordVisible;
+
+    public string PasswordVisibilityActionText =>
+        IsPasswordVisible ? "Hide password" : "Show password";
+
+    public string ConfirmPasswordVisibilityActionText =>
+        IsConfirmPasswordVisible ? "Hide password" : "Show password";
 
     public RegisterViewModel(
         AuthenticationService authenticationService,
@@ -58,12 +76,21 @@ public partial class RegisterViewModel : ViewModelBase
 
         try
         {
+            if (!string.Equals(Password, ConfirmPassword, StringComparison.Ordinal))
+            {
+                ErrorMessage = PasswordMismatchMessage;
+                return;
+            }
+
             var result = await _authenticationService
                 .RegisterAsync(Username, Password);
 
             if (result.IsSuccess)
             {
                 Password = string.Empty;
+                ConfirmPassword = string.Empty;
+                IsPasswordVisible = false;
+                IsConfirmPasswordVisible = false;
                 StatusMessage = RegistrationSuccessMessage;
                 _navigationService.Navigate(AppRoute.Login, RegistrationSuccessMessage);
                 return;
@@ -74,6 +101,9 @@ public partial class RegisterViewModel : ViewModelBase
         catch (InvalidOperationException)
         {
             Password = string.Empty;
+            ConfirmPassword = string.Empty;
+            IsPasswordVisible = false;
+            IsConfirmPasswordVisible = false;
             ErrorMessage = TechnicalFailureMessage;
         }
         finally
@@ -87,6 +117,18 @@ public partial class RegisterViewModel : ViewModelBase
     {
         ErrorMessage = string.Empty;
         StatusMessage = string.Empty;
+        IsPasswordVisible = false;
+        IsConfirmPasswordVisible = false;
         _navigationService.Navigate(AppRoute.Login);
+    }
+
+    partial void OnIsPasswordVisibleChanged(bool value)
+    {
+        OnPropertyChanged(nameof(PasswordVisibilityActionText));
+    }
+
+    partial void OnIsConfirmPasswordVisibleChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ConfirmPasswordVisibilityActionText));
     }
 }

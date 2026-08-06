@@ -97,6 +97,15 @@ public partial class RecordActivityViewModel : ViewModelBase, INavigationAware
     [ObservableProperty]
     private bool _hasResult;
 
+    [ObservableProperty]
+    private string _metric1Usage = string.Empty;
+
+    [ObservableProperty]
+    private string _metric2Usage = string.Empty;
+
+    [ObservableProperty]
+    private string _metric3Usage = string.Empty;
+
     public RecordActivityViewModel(
         AuthenticationService authenticationService,
         ActivityService activityService,
@@ -422,12 +431,15 @@ public partial class RecordActivityViewModel : ViewModelBase, INavigationAware
         Metric1Label = metric1.Label;
         Metric1Unit = metric1.Unit;
         Metric1Guidance = CreateMetricGuidance(metric1);
+        Metric1Usage = CreateMetricUsage(metric1);
         Metric2Label = metric2.Label;
         Metric2Unit = metric2.Unit;
         Metric2Guidance = CreateMetricGuidance(metric2);
+        Metric2Usage = CreateMetricUsage(metric2);
         Metric3Label = metric3.Label;
         Metric3Unit = metric3.Unit;
         Metric3Guidance = CreateMetricGuidance(metric3);
+        Metric3Usage = CreateMetricUsage(metric3);
     }
 
     private void ClearMetricInputs()
@@ -442,12 +454,15 @@ public partial class RecordActivityViewModel : ViewModelBase, INavigationAware
         Metric1Label = string.Empty;
         Metric1Unit = string.Empty;
         Metric1Guidance = string.Empty;
+        Metric1Usage = string.Empty;
         Metric2Label = string.Empty;
         Metric2Unit = string.Empty;
         Metric2Guidance = string.Empty;
+        Metric2Usage = string.Empty;
         Metric3Label = string.Empty;
         Metric3Unit = string.Empty;
         Metric3Guidance = string.Empty;
+        Metric3Usage = string.Empty;
         ClearMetricInputs();
         HasResult = false;
         EstimatedCalories = 0;
@@ -493,5 +508,24 @@ public partial class RecordActivityViewModel : ViewModelBase, INavigationAware
         SelectedActivity = null;
         ClearMetricState();
         HasLoaded = false;
+    }
+
+    private static string CreateMetricUsage(ActivityMetricDefinition metric)
+    {
+        return metric.Label switch
+        {
+            "Steps" => "Total number of steps taken.",
+            "Distance" => "Total distance covered in kilometres.",
+            "Duration" => "Total time spent on the activity in minutes.",
+            "Laps" => "Total number of completed swimming laps.",
+            "Average heart rate" => "Average heart rate maintained during the activity.",
+            "Average pace" => "Average number of minutes needed to complete one kilometre.",
+            "Average speed" => "Average travelling speed measured in kilometres per hour.",
+            "Average power" => "Average rowing power maintained during the session.",
+            "Stroke rate" => "Average number of rowing strokes completed per minute.",
+            "Total sets" => "Total number of strength-training sets completed.",
+            "Effort level" => "Perceived effort level for the session, from 1 to 3.",
+            _ => $"Enter the activity's {metric.Label.ToLowerInvariant()} measurement."
+        };
     }
 }

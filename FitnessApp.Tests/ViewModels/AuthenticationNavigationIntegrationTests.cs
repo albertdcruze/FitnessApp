@@ -64,6 +64,7 @@ public sealed class AuthenticationNavigationIntegrationTests
         graph.NavigationService.Navigate(AppRoute.Register);
         graph.RegisterViewModel.Username = "RegistrationUser01";
         graph.RegisterViewModel.Password = Password;
+        graph.RegisterViewModel.ConfirmPassword = Password;
 
         await graph.RegisterViewModel.RegisterCommand.ExecuteAsync(null);
 
