@@ -37,13 +37,8 @@
                             MaxWidth="375"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center">
-                    <TextBlock Classes="register-app-heading"
-                               Text="FITNESS APP"
-                               FontSize="48"
-                               FontWeight="Bold"
-                               Foreground="{DynamicResource ForegroundColor}"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap" />
+                    <TextBlock Classes="register-app-heading auth-brand-heading"
+                               Text="FitTrack" />
 
                     <shad:Card HorizontalAlignment="Stretch"
                                VerticalAlignment="Center"

@@ -18,12 +18,8 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         Spacing="24">
-                <TextBlock Text="FITNESS APP"
-                           FontSize="48"
-                           FontWeight="Bold"
-                           Foreground="{DynamicResource ForegroundColor}"
-                           TextAlignment="Center"
-                           TextWrapping="Wrap" />
+                <TextBlock Classes="auth-brand-heading"
+                           Text="FitTrack" />
 
                 <shad:Card HorizontalAlignment="Stretch"
                            VerticalAlignment="Center"
@@ -79,7 +75,7 @@
                                  Foreground="{DynamicResource ForegroundColor}"
                                  shad:ControlAssist.Label="Username"
                                  AutomationProperties.Name="Username"
-                                 AutomationProperties.HelpText="Enter your FitnessApp username."
+                                 AutomationProperties.HelpText="Enter your FitTrack username."
                                  input:KeyboardNavigation.TabIndex="1" />
 
                         <StackPanel Spacing="12">
@@ -114,7 +110,7 @@
                                      BorderBrush="{DynamicResource BorderColor}"
                                      Foreground="{DynamicResource ForegroundColor}"
                                      AutomationProperties.Name="Password"
-                                     AutomationProperties.HelpText="Enter your FitnessApp password."
+                                     AutomationProperties.HelpText="Enter your FitTrack password."
                                      input:KeyboardNavigation.TabIndex="3" />
                         </StackPanel>
                     </StackPanel>

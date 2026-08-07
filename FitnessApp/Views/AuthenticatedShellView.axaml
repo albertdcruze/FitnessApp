@@ -7,6 +7,7 @@
 
     <UserControl.Resources>
         <FontFamily x:Key="ShellLucideIconFont">avares://FitnessApp/Assets/Fonts#lucide</FontFamily>
+        <FontFamily x:Key="ShellBrandFont">avares://FitnessApp/Assets/Fonts#Wah Iki</FontFamily>
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -16,6 +17,20 @@
             <Setter Property="FontFamily" Value="{StaticResource ShellLucideIconFont}" />
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="ExtraLight" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.ShellBrand">
+            <Setter Property="FontFamily" Value="{StaticResource ShellBrandFont}" />
+            <Setter Property="FontSize" Value="44" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.ShellBrandCompact">
+            <Setter Property="FontFamily" Value="{StaticResource ShellBrandFont}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="White" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
@@ -37,32 +52,22 @@
                       BorderThickness="0,0,1,0">
             <shad:Sidebar.Header>
                 <Grid Height="40"
-                      Margin="0,0,0,8"
+                      Margin="8,8,0,8"
                       ColumnDefinitions="32,*"
                       ColumnSpacing="10">
-                    <Border Width="32"
-                            Height="32"
-                            VerticalAlignment="Center"
-                            Background="#0588F0"
-                            CornerRadius="8">
-                        <Viewbox Width="18"
-                                 Height="18">
-                            <TextBlock Classes="LucideIcon"
-                                       Text="&#58583;"
-                                       Foreground="White" />
-                        </Viewbox>
-                    </Border>
-                    <StackPanel Grid.Column="1"
+                    <TextBlock Classes="ShellBrandCompact"
+                               Text="F"
+                               IsVisible="{Binding !IsSidebarExpanded}"
+                               Margin="-12,0,0,0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="0"
+                                Grid.ColumnSpan="2"
                                 IsVisible="{Binding IsSidebarExpanded}"
                                 VerticalAlignment="Center"
                                 Spacing="0">
-                        <TextBlock Text="FitnessApp"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{DynamicResource ForegroundColor}" />
-                        <TextBlock Text="Fitness workspace"
-                                   FontSize="11"
-                                   Foreground="{DynamicResource MutedColor}" />
+                        <TextBlock Classes="ShellBrand"
+                                   Text="FitTrack" />
                     </StackPanel>
                 </Grid>
             </shad:Sidebar.Header>
@@ -85,7 +90,7 @@
                         <Viewbox Width="18"
                                  Height="18">
                             <TextBlock Classes="LucideIcon"
-                                       Text="&#58001;"
+                                       Text="&#57793;"
                                        Foreground="{DynamicResource ForegroundColor}" />
                         </Viewbox>
                     </shad:SidebarItem.Icon>
@@ -101,7 +106,7 @@
                         <Viewbox Width="18"
                                  Height="18">
                             <TextBlock Classes="LucideIcon"
-                                       Text="&#57455;"
+                                       Text="&#57732;"
                                        Foreground="{DynamicResource ForegroundColor}" />
                         </Viewbox>
                     </shad:SidebarItem.Icon>
@@ -119,21 +124,6 @@
                             <TextBlock Classes="LucideIcon"
                                        Text="&#57620;"
                                        Foreground="{DynamicResource ForegroundColor}" />
-                        </Viewbox>
-                    </shad:SidebarItem.Icon>
-                </shad:SidebarItem>
-
-                <shad:SidebarItem Content="More features"
-                                  IsEnabled="False"
-                                  ToolTip.Tip="More features coming soon"
-                                  ToolTip.Placement="Right"
-                                  AutomationProperties.Name="More features coming soon">
-                    <shad:SidebarItem.Icon>
-                        <Viewbox Width="18"
-                                 Height="18">
-                            <TextBlock Classes="LucideIcon"
-                                       Text="&#57530;"
-                                       Foreground="{DynamicResource MutedColor}" />
                         </Viewbox>
                     </shad:SidebarItem.Icon>
                 </shad:SidebarItem>
@@ -178,7 +168,7 @@
                                       ToolTip.Tip="Log out"
                                       ToolTip.Placement="Right"
                                       AutomationProperties.Name="Log out"
-                                      AutomationProperties.HelpText="End the current FitnessApp session and return to sign in.">
+                                      AutomationProperties.HelpText="End the current FitTrack session and return to sign in.">
                         <shad:SidebarItem.Icon>
                             <Viewbox Width="18"
                                      Height="18">

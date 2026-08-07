@@ -15,39 +15,46 @@
 
         <DataTemplate x:Key="ActivityCardItemTemplate"
                       x:DataType="models:ActivityDefinition">
-            <Border Classes="ActivityTile"
-                    Margin="6"
-                    ClipToBounds="True"
-                    Background="{DynamicResource CardBackgroundColor}"
-                    BorderBrush="{DynamicResource BorderColor}"
-                    BorderThickness="1"
-                    CornerRadius="{DynamicResource LgCornerRadius}"
-                    AutomationProperties.Name="{Binding DisplayName}">
+                    <Border Classes="ActivityTile"
+                            Margin="6"
+                            ClipToBounds="True"
+                            Background="{DynamicResource CardBackgroundColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}"
+                            AutomationProperties.Name="{Binding DisplayName}">
                 <Grid ClipToBounds="True">
-                    <Image Source="{Binding ActivityType, Converter={StaticResource ActivityImageConverter}}"
-                           Stretch="UniformToFill"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
+                    <Border CornerRadius="{DynamicResource LgCornerRadius}"
+                            ClipToBounds="True"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+                        <Image Source="{Binding ActivityType, Converter={StaticResource ActivityImageConverter}}"
+                               Stretch="UniformToFill" />
+                    </Border>
 
-                    <Border Classes="ActivityDarkOverlay"
-                            Background="{DynamicResource BackgroundColor}" />
-
-                    <TextBlock Text="{Binding DisplayName}"
-                               Margin="36,12"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource ForegroundColor}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               TextAlignment="Center"
-                               TextWrapping="Wrap" />
+                    <Border Classes="ActivityNameOverlay"
+                            Margin="18"
+                            Padding="14,8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#66000000"
+                            CornerRadius="{DynamicResource MdCornerRadius}">
+                        <TextBlock Text="{Binding DisplayName}"
+                                   FontSize="24"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </Border>
 
                     <Border Classes="ActivitySelectedRing"
                             Margin="3"
                             BorderBrush="{DynamicResource ForegroundColor}"
-                            BorderThickness="1"
+                            BorderThickness="2"
                             CornerRadius="{DynamicResource MdCornerRadius}"
-                            IsVisible="False" />
+                            />
 
                     <Border Classes="ActivitySelectedCheck"
                             Width="22"
@@ -58,9 +65,9 @@
                             VerticalAlignment="Top"
                             Background="{DynamicResource CardBackgroundColor}"
                             BorderBrush="{DynamicResource ForegroundColor}"
-                            BorderThickness="1"
+                            BorderThickness="2"
                             CornerRadius="{DynamicResource SmCornerRadius}"
-                            IsVisible="False">
+                            >
                         <Viewbox Width="12"
                                  Height="12">
                             <TextBlock Classes="RecordActivityLucideIcon"
@@ -502,20 +509,17 @@
         <Style Selector="ListBox.SingleColumnActivityGrid ListBoxItem Border.ActivityTile">
             <Setter Property="Height" Value="230" />
         </Style>
-        <Style Selector="ListBox.ActivityGrid ListBoxItem Border.ActivityDarkOverlay">
-            <Setter Property="Opacity" Value="0.52" />
+        <Style Selector="ListBox.ActivityGrid ListBoxItem Border.ActivityNameOverlay">
+            <Setter Property="Opacity" Value="1" />
         </Style>
-        <Style Selector="ListBox.ActivityGrid ListBoxItem:pointerover Border.ActivityDarkOverlay">
-            <Setter Property="Opacity" Value="0.40" />
+        <Style Selector="ListBox.ActivityGrid ListBoxItem Border.ActivitySelectedRing">
+            <Setter Property="IsVisible" Value="False" />
         </Style>
-        <Style Selector="ListBox.ActivityGrid ListBoxItem:pressed Border.ActivityDarkOverlay">
-            <Setter Property="Opacity" Value="0.46" />
+        <Style Selector="ListBox.ActivityGrid ListBoxItem Border.ActivitySelectedCheck">
+            <Setter Property="IsVisible" Value="False" />
         </Style>
         <Style Selector="ListBox.ActivityGrid ListBoxItem:pointerover Border.ActivityTile">
             <Setter Property="BorderBrush" Value="{DynamicResource MutedColor}" />
-        </Style>
-        <Style Selector="ListBox.ActivityGrid ListBoxItem:selected Border.ActivityDarkOverlay">
-            <Setter Property="Opacity" Value="0.34" />
         </Style>
         <Style Selector="ListBox.ActivityGrid ListBoxItem:selected Border.ActivitySelectedRing">
             <Setter Property="IsVisible" Value="True" />
