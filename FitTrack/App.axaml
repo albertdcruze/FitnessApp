@@ -1,0 +1,355 @@
+<Application
+    x:Class="FitTrack.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:FitTrack.ViewModels"
+    xmlns:views="using:FitTrack.Views"
+    xmlns:themes="clr-namespace:ShadUI;assembly=ShadUI"
+    RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0A0A0A" />
+        <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#111111" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#171717" />
+        <SolidColorBrush x:Key="MainSurfaceBrush" Color="#171717" />
+        <SolidColorBrush x:Key="ElevatedSurfaceBrush" Color="#262626" />
+        <SolidColorBrush x:Key="InputSurfaceBrush" Color="#0A0A0A" />
+        <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#404040" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#404040" />
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FAFAFA" />
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A3A3A3" />
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#737373" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#E5E5E5" />
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#FAFAFA" />
+        <SolidColorBrush x:Key="AccentPressedBrush" Color="#D4D4D4" />
+        <SolidColorBrush x:Key="AccentSubtleBrush" Color="#262626" />
+        <SolidColorBrush x:Key="SidebarHoverBrush" Color="#262626" />
+        <SolidColorBrush x:Key="SidebarSelectedBrush" Color="#262626" />
+        <SolidColorBrush x:Key="LogoutHoverBrush" Color="#2B1719" />
+        <SolidColorBrush x:Key="ErrorBrush" Color="#FCA5A5" />
+        <SolidColorBrush x:Key="ErrorSurfaceBrush" Color="#2B1515" />
+        <SolidColorBrush x:Key="SuccessBrush" Color="#86EFAC" />
+        <SolidColorBrush x:Key="SuccessSurfaceBrush" Color="#14231A" />
+        <SolidColorBrush x:Key="InfoBrush" Color="#B7C3CC" />
+        <SolidColorBrush x:Key="InfoSurfaceBrush" Color="#1C1C1C" />
+        <SolidColorBrush x:Key="AuthCardBrush" Color="#171717" />
+        <SolidColorBrush x:Key="AuthInputBrush" Color="#0A0A0A" />
+        <SolidColorBrush x:Key="PrimaryActionBrush" Color="#E5E5E5" />
+        <SolidColorBrush x:Key="PrimaryActionForegroundBrush" Color="#171717" />
+        <SolidColorBrush x:Key="SecondaryActionBrush" Color="#262626" />
+        <SolidColorBrush x:Key="SecondaryActionForegroundBrush" Color="#FAFAFA" />
+        <SolidColorBrush x:Key="FocusBorderBrush" Color="#FAFAFA" />
+        <CornerRadius x:Key="SharedCornerRadius">12</CornerRadius>
+        <Thickness x:Key="CompactCardPadding">16</Thickness>
+        <x:Double x:Key="SharedControlHeight">40</x:Double>
+        <FontFamily x:Key="AuthBrandFont">avares://FitTrack/Assets/Fonts#Wah Iki</FontFamily>
+    </Application.Resources>
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RegisterViewModel}">
+            <views:RegisterView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GoalViewModel}">
+            <views:GoalView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:RecordActivityViewModel}">
+            <views:RecordActivityView />
+        </DataTemplate>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <themes:ShadTheme />
+
+        <Style Selector="TextBlock.auth-brand-heading">
+            <Setter Property="FontFamily" Value="{DynamicResource AuthBrandFont}" />
+            <Setter Property="FontSize" Value="48" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="MinHeight" Value="{DynamicResource SharedControlHeight}" />
+            <Setter Property="Padding" Value="14,9" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="MinHeight" Value="{DynamicResource SharedControlHeight}" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Background" Value="{DynamicResource InputSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinHeight" Value="{DynamicResource SharedControlHeight}" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Background" Value="{DynamicResource InputSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="Button:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="ComboBox:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.page-subtitle">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.field-label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.muted">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+        <Style Selector="TextBlock.auth-title">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.auth-subtitle">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.auth-label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.auth-guidance">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.metric-guidance">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.value-label">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.value">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.large-value">
+            <Setter Property="FontSize" Value="34" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        </Style>
+
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppBackgroundBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.primary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+        </Style>
+        <Style Selector="Button.primary:pressed">
+            <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{DynamicResource ElevatedSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+        <Style Selector="Button.secondary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SidebarHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="Button.sidebar-item">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="MinHeight" Value="38" />
+        </Style>
+        <Style Selector="Button.sidebar-item:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SidebarHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="Button.sidebar-item.active">
+            <Setter Property="Background" Value="{DynamicResource SidebarSelectedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        </Style>
+        <Style Selector="Button.sidebar-item.active:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SidebarSelectedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentHoverBrush}" />
+        </Style>
+        <Style Selector="TextBlock.sidebar-label">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <Style Selector="TextBlock.sidebar-label.active">
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.sidebar-logout">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="MinHeight" Value="38" />
+        </Style>
+        <Style Selector="Button.sidebar-logout:pointerover">
+            <Setter Property="Background" Value="{DynamicResource LogoutHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="Border.compact-card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource SharedCornerRadius}" />
+            <Setter Property="Padding" Value="{DynamicResource CompactCardPadding}" />
+        </Style>
+        <Style Selector="Border.accent-card">
+            <Setter Property="Background" Value="{DynamicResource AccentSubtleBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource SharedCornerRadius}" />
+            <Setter Property="Padding" Value="{DynamicResource CompactCardPadding}" />
+        </Style>
+        <Style Selector="TextBox.form-input">
+            <Setter Property="Background" Value="{DynamicResource InputSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+
+        <Style Selector="Border.auth-card">
+            <Setter Property="Background" Value="{DynamicResource AuthCardBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="24" />
+        </Style>
+        <Style Selector="TextBox.auth-input">
+            <Setter Property="Background" Value="{DynamicResource AuthInputBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="TextBox.auth-input:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource FocusBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Button.auth-primary">
+            <Setter Property="Background" Value="{DynamicResource PrimaryActionBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryActionBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryActionForegroundBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.auth-primary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentHoverBrush}" />
+        </Style>
+        <Style Selector="Button.auth-primary:pressed">
+            <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentPressedBrush}" />
+        </Style>
+        <Style Selector="Button.auth-primary:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource FocusBorderBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style Selector="Button.auth-primary:disabled">
+            <Setter Property="Opacity" Value="0.55" />
+        </Style>
+        <Style Selector="Button.auth-secondary">
+            <Setter Property="Background" Value="{DynamicResource SecondaryActionBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SurfaceBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryActionForegroundBrush}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.auth-secondary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBorderBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+        <Style Selector="Button.auth-secondary:pressed">
+            <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+        </Style>
+        <Style Selector="Button.auth-secondary:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource FocusBorderBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style Selector="Button.auth-secondary:disabled">
+            <Setter Property="Opacity" Value="0.55" />
+        </Style>
+
+        <Style Selector="TextBlock.message-error">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="TextBlock.message-success">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+        <Style Selector="TextBlock.message-info">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource InfoBrush}" />
+        </Style>
+
+        <Style Selector="Border.message-error">
+            <Setter Property="Background" Value="{DynamicResource ErrorSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource SharedCornerRadius}" />
+            <Setter Property="Padding" Value="10" />
+        </Style>
+        <Style Selector="Border.message-success">
+            <Setter Property="Background" Value="{DynamicResource SuccessSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource SharedCornerRadius}" />
+            <Setter Property="Padding" Value="10" />
+        </Style>
+        <Style Selector="Border.message-info">
+            <Setter Property="Background" Value="{DynamicResource InfoSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource InfoBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource SharedCornerRadius}" />
+            <Setter Property="Padding" Value="10" />
+        </Style>
+    </Application.Styles>
+</Application>

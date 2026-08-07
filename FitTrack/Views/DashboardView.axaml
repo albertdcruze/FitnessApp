@@ -1,0 +1,945 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitTrack.ViewModels"
+             xmlns:shad="using:ShadUI"
+             xmlns:input="using:Avalonia.Input"
+             xmlns:converters="using:Avalonia.Data.Converters"
+             x:Class="FitTrack.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <UserControl.Resources>
+        <FontFamily x:Key="DashboardLucideIconFont">avares://FitTrack/Assets/Fonts#lucide</FontFamily>
+
+        <DataTemplate x:Key="CaloriesMetricTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="174"
+                       Padding="24"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <Grid ColumnDefinitions="*,Auto"
+                      ColumnSpacing="20">
+                    <StackPanel VerticalAlignment="Center"
+                                Spacing="8">
+                        <Grid ColumnDefinitions="32,*"
+                              ColumnSpacing="10">
+                            <Border Width="32"
+                                    Height="32"
+                                    Background="{DynamicResource SelectionColor}"
+                                    CornerRadius="{DynamicResource MdCornerRadius}">
+                                <Viewbox Width="17"
+                                         Height="17">
+                                    <TextBlock Classes="DashboardLucideIcon"
+                                               Text="&#57558;"
+                                               Foreground="{DynamicResource ForegroundColor}" />
+                                </Viewbox>
+                            </Border>
+                            <TextBlock Grid.Column="1"
+                                       Text="Estimated calories burned today"
+                                       Classes="Small"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                        <TextBlock Text="{Binding TotalCalories, StringFormat='{}{0:0.##}'}"
+                                   FontSize="48"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundColor}"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="Estimated calories"
+                                   Classes="Small Muted"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Viewbox Grid.Column="1"
+                             Width="72"
+                             Height="72"
+                             VerticalAlignment="Bottom"
+                             Opacity="0.08">
+                        <TextBlock Classes="DashboardLucideIcon"
+                                   Text="&#57558;"
+                                   Foreground="{DynamicResource ForegroundColor}" />
+                    </Viewbox>
+                </Grid>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TargetMetricTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="174"
+                       Padding="20"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <StackPanel VerticalAlignment="Center"
+                            Spacing="8">
+                    <Grid ColumnDefinitions="32,*"
+                          ColumnSpacing="10">
+                        <Border Width="32"
+                                Height="32"
+                                Background="{DynamicResource SelectionColor}"
+                                CornerRadius="{DynamicResource MdCornerRadius}">
+                            <Viewbox Width="17"
+                                     Height="17">
+                                <TextBlock Classes="DashboardLucideIcon"
+                                           Text="&#57732;"
+                                           Foreground="{DynamicResource ForegroundColor}" />
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Grid.Column="1"
+                                   Text="Target"
+                                   Classes="Small Muted"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                    <TextBlock Text="{Binding TargetCalories, StringFormat='{}{0:0.##}'}"
+                               FontSize="32"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource ForegroundColor}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="estimated calories"
+                               Classes="Caption Muted"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="RemainingMetricTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="174"
+                       Padding="20"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <StackPanel VerticalAlignment="Center"
+                            Spacing="8">
+                    <Grid ColumnDefinitions="32,*"
+                          ColumnSpacing="10">
+                        <Border Width="32"
+                                Height="32"
+                                Background="{DynamicResource SelectionColor}"
+                                CornerRadius="{DynamicResource MdCornerRadius}">
+                            <Viewbox Width="17"
+                                     Height="17">
+                                <TextBlock Classes="DashboardLucideIcon"
+                                           Text="&#57931;"
+                                           Foreground="{DynamicResource ForegroundColor}" />
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Grid.Column="1"
+                                   Text="Remaining"
+                                   Classes="Small Muted"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                    <TextBlock Text="{Binding RemainingCalories, StringFormat='{}{0:0.##}'}"
+                               FontSize="32"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource ForegroundColor}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="estimated calories"
+                               Classes="Caption Muted"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ProgressMetricTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="174"
+                       Padding="20"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <StackPanel VerticalAlignment="Center"
+                            Spacing="8">
+                    <Grid ColumnDefinitions="32,*"
+                          ColumnSpacing="10">
+                        <Border Width="32"
+                                Height="32"
+                                Background="{DynamicResource SelectionColor}"
+                                CornerRadius="{DynamicResource MdCornerRadius}">
+                            <Viewbox Width="17"
+                                     Height="17">
+                                <TextBlock Classes="DashboardLucideIcon"
+                                           Text="&#57745;"
+                                           Foreground="{DynamicResource ForegroundColor}" />
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Grid.Column="1"
+                                   Text="Actual progress"
+                                   Classes="Small Muted"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                    <TextBlock Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}%'}"
+                               FontSize="32"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource ForegroundColor}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="exact percentage"
+                               Classes="Caption Muted"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TodayProgressTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="300"
+                       Padding="24"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="12">
+                        <shad:CardTitle Content="Today progress"
+                                        FontSize="18"
+                                        TextBlock.TextWrapping="Wrap" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}%'}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundColor}"
+                                   TextAlignment="Right"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                </shad:Card.Header>
+
+                <StackPanel Spacing="14">
+                    <TextBlock Classes="Small Muted"
+                               TextWrapping="Wrap">
+                        <Run Text="{Binding TotalCalories, StringFormat='{}{0:0.##}'}" />
+                        <Run Text=" of " />
+                        <Run Text="{Binding TargetCalories, StringFormat='{}{0:0.##}'}" />
+                        <Run Text=" estimated calories" />
+                    </TextBlock>
+
+                    <ProgressBar Minimum="0"
+                                 Maximum="100"
+                                 Height="8"
+                                 HorizontalAlignment="Stretch"
+                                 Background="{DynamicResource BorderColor}"
+                                 Foreground="{DynamicResource PrimaryColor}"
+                                 CornerRadius="{DynamicResource FullCornerRadius}"
+                                 Value="{Binding ProgressBarValue}"
+                                 AutomationProperties.Name="Today's progress"
+                                 AutomationProperties.HelpText="The bar is visually capped at 100 percent while the numeric percentage remains exact." />
+
+                    <TextBlock Classes="Caption Muted"
+                               TextWrapping="Wrap">
+                        <Run Text="{Binding RemainingCalories, StringFormat='{}{0:0.##}'}" />
+                        <Run Text=" estimated calories remaining today." />
+                    </TextBlock>
+
+                    <Border Padding="12"
+                            Background="{DynamicResource SelectionColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}">
+                        <Grid ColumnDefinitions="16,*"
+                              ColumnSpacing="8">
+                            <Viewbox Width="16"
+                                     Height="16"
+                                     VerticalAlignment="Center">
+                                <Grid>
+                                    <TextBlock Classes="DashboardLucideIcon"
+                                               Text="&#57599;"
+                                               Foreground="{DynamicResource ForegroundColor}"
+                                               IsVisible="{Binding !IsGoalAchieved}" />
+                                    <TextBlock Classes="DashboardLucideIcon"
+                                               Text="&#57894;"
+                                               Foreground="{DynamicResource ForegroundColor}"
+                                               IsVisible="{Binding IsGoalAchieved}" />
+                                </Grid>
+                            </Viewbox>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding StatusMessage}"
+                                       Classes="Small"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <shad:Card.Footer>
+                    <WrapPanel Orientation="Horizontal"
+                               ItemSpacing="10"
+                               LineSpacing="10">
+                        <Button Classes="Primary"
+                                Command="{Binding NavigateToRecordActivityCommand}"
+                                IsEnabled="{Binding !IsBusy}"
+                                input:KeyboardNavigation.TabIndex="81">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <Viewbox Width="16"
+                                         Height="16">
+                                    <TextBlock Classes="DashboardLucideIcon"
+                                               Text="&#57400;"
+                                               Foreground="{DynamicResource PrimaryForegroundColor}" />
+                                </Viewbox>
+                                <TextBlock Text="Record Activity" />
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="Secondary"
+                                Command="{Binding NavigateToGoalCommand}"
+                                IsEnabled="{Binding !IsBusy}"
+                                input:KeyboardNavigation.TabIndex="82">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <Viewbox Width="16"
+                                         Height="16">
+                                    <TextBlock Classes="DashboardLucideIcon"
+                                               Text="&#57732;"
+                                               Foreground="{DynamicResource ForegroundColor}" />
+                                </Viewbox>
+                                <TextBlock Text="Set Goal" />
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </shad:Card.Footer>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GoalOverviewTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="300"
+                       Padding="24"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="20,*"
+                          ColumnSpacing="10">
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="DashboardLucideIcon"
+                                       Text="&#57557;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <shad:CardTitle Grid.Column="1"
+                                        Content="Goal overview"
+                                        FontSize="18"
+                                        TextBlock.TextWrapping="Wrap" />
+                    </Grid>
+                </shad:Card.Header>
+        
+                <StackPanel Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="12">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Daily goal"
+                                       Classes="Caption Muted" />
+                            <TextBlock Text="{Binding TargetCalories, StringFormat='{}{0:0.##}'}"
+                                       FontSize="28"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1"
+                                    Spacing="4"
+                                    HorizontalAlignment="Right">
+                            <TextBlock Text="Current percentage"
+                                       Classes="Caption Muted"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}%'}"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextAlignment="Right"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+        
+                    <ProgressBar Minimum="0"
+                                 Maximum="100"
+                                 Height="8"
+                                 HorizontalAlignment="Stretch"
+                                 Background="{DynamicResource BorderColor}"
+                                 Foreground="{DynamicResource PrimaryColor}"
+                                 CornerRadius="{DynamicResource FullCornerRadius}"
+                                 Value="{Binding ProgressBarValue}"
+                                 AutomationProperties.Name="Goal overview progress" />
+        
+                    <Border Padding="12"
+                            Background="{DynamicResource SecondaryColor50}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}">
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="12">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Remaining to goal"
+                                           Classes="Caption Muted"
+                                           TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding RemainingCalories, StringFormat='{}{0:0.##} calories'}"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1"
+                                        Spacing="4">
+                                <TextBlock Text="Status"
+                                           Classes="Caption Muted" />
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ThisWeekTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="300"
+                       Padding="24"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="20,*"
+                          ColumnSpacing="10">
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="DashboardLucideIcon"
+                                       Text="&#58041;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <shad:CardTitle Grid.Column="1"
+                                        Content="This week"
+                                        FontSize="18"
+                                        TextBlock.TextWrapping="Wrap" />
+                    </Grid>
+                </shad:Card.Header>
+
+                <Grid ColumnDefinitions="*,Auto"
+                      ColumnSpacing="16">
+                    <StackPanel Spacing="18">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Recorded activities"
+                                       Classes="Small Muted"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding ActivitiesThisWeek}"
+                                       FontSize="32"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                            <TextBlock Text="sessions in the current local week"
+                                       Classes="Caption Muted"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Average calories per activity"
+                                       Classes="Small Muted"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding AverageCaloriesThisWeek, StringFormat='{}{0:0.##}'}"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="estimated calories"
+                                       Classes="Caption Muted" />
+                        </StackPanel>
+                    </StackPanel>
+                    <Viewbox Grid.Column="1"
+                             Width="54"
+                             Height="54"
+                             VerticalAlignment="Bottom"
+                             Opacity="0.08">
+                        <TextBlock Classes="DashboardLucideIcon"
+                                   Text="&#58277;"
+                                   Foreground="{DynamicResource ForegroundColor}" />
+                    </Viewbox>
+                </Grid>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WeeklyChartTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="330"
+                       Padding="24"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="20,*"
+                          ColumnSpacing="10">
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="DashboardLucideIcon"
+                                       Text="&#58019;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <StackPanel Grid.Column="1"
+                                    Spacing="3">
+                            <shad:CardTitle Content="Weekly calorie trend"
+                                            FontSize="18"
+                                            TextBlock.TextWrapping="Wrap" />
+                            <shad:CardDescription Content="Last seven local calendar days"
+                                                  TextBlock.TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </shad:Card.Header>
+
+                <ItemsControl ItemsSource="{Binding LastSevenDays}"
+                              HorizontalAlignment="Stretch">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DailyCaloriePoint">
+                            <Grid RowDefinitions="Auto,126,Auto"
+                                  Margin="4,0"
+                                  ToolTip.Tip="{Binding ToolTipText}">
+                                <TextBlock Text="{Binding TotalCalories, StringFormat='{}{0:0.##}'}"
+                                           Classes="Caption Muted"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap" />
+                                <Grid Grid.Row="1"
+                                      VerticalAlignment="Stretch">
+                                    <Border Height="{Binding RelativeBarHeight}"
+                                            MinHeight="2"
+                                            Margin="2,8,2,0"
+                                            VerticalAlignment="Bottom"
+                                            Background="{DynamicResource MutedColor}"
+                                            CornerRadius="{DynamicResource SmCornerRadius}"
+                                            IsVisible="{Binding !IsToday}" />
+                                    <Border Height="{Binding RelativeBarHeight}"
+                                            MinHeight="2"
+                                            Margin="2,8,2,0"
+                                            VerticalAlignment="Bottom"
+                                            Background="{DynamicResource PrimaryColor}"
+                                            CornerRadius="{DynamicResource SmCornerRadius}"
+                                            IsVisible="{Binding IsToday}" />
+                                </Grid>
+                                <TextBlock Grid.Row="2"
+                                           Text="{Binding DayLabel}"
+                                           Classes="Caption Muted"
+                                           Margin="0,8,0,0"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="RecentActivityTemplate"
+                      x:DataType="vm:DashboardViewModel">
+            <shad:Card MinHeight="330"
+                       Padding="24"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="20,*"
+                          ColumnSpacing="10">
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="DashboardLucideIcon"
+                                       Text="&#57845;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <StackPanel Grid.Column="1"
+                                    Spacing="3">
+                            <shad:CardTitle Content="Recent activity"
+                                            FontSize="18"
+                                            TextBlock.TextWrapping="Wrap" />
+                            <shad:CardDescription Content="Your five newest records"
+                                                  TextBlock.TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </shad:Card.Header>
+
+                <Grid>
+                    <ItemsControl ItemsSource="{Binding RecentActivities}"
+                                  IsVisible="{Binding HasRecentActivities}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:RecentActivityItem">
+                                <Border Padding="0,11"
+                                        BorderBrush="{DynamicResource BorderColor}"
+                                        BorderThickness="0,0,0,1">
+                                    <Grid ColumnDefinitions="*,Auto"
+                                          ColumnSpacing="12">
+                                        <StackPanel Spacing="3">
+                                            <TextBlock Text="{Binding ActivityName}"
+                                                       Classes="Small"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource ForegroundColor}"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding RecordedAtText}"
+                                                       Classes="Caption Muted"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="3"
+                                                    HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Calories, StringFormat='{}{0:0.##}'}"
+                                                       Classes="Small"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource ForegroundColor}"
+                                                       TextAlignment="Right"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="estimated cal"
+                                                       Classes="Caption Muted"
+                                                       TextAlignment="Right"
+                                                       TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <StackPanel Spacing="12"
+                                IsVisible="{Binding !HasRecentActivities}">
+                        <TextBlock Text="No activities recorded yet."
+                                   Classes="Small"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundColor}"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="Record an activity to start building your fitness overview."
+                                   Classes="Small Muted"
+                                   TextWrapping="Wrap" />
+                        <Button Content="Record Activity"
+                                Classes="Secondary"
+                                HorizontalAlignment="Left"
+                                Command="{Binding NavigateToRecordActivityCommand}"
+                                IsEnabled="{Binding !IsBusy}"
+                                input:KeyboardNavigation.TabIndex="83" />
+                    </StackPanel>
+                </Grid>
+            </shad:Card>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.DashboardLucideIcon">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="FontFamily" Value="{StaticResource DashboardLucideIconFont}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="ExtraLight" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Top">
+        <Grid ColumnDefinitions="*,12">
+            <StackPanel Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        Spacing="20">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="16">
+            <StackPanel Spacing="4">
+                <TextBlock Classes="h2"
+                           Foreground="{DynamicResource ForegroundColor}"
+                           TextWrapping="Wrap">
+                    <Run Text="Welcome back, " />
+                    <Run Text="{Binding Username}" />
+                    <Run Text="!" />
+                </TextBlock>
+                <TextBlock Text="Here is your fitness overview for today."
+                           Classes="Muted"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+            <Button Grid.Column="1"
+                    Classes="Secondary"
+                    Command="{Binding RefreshCommand}"
+                    IsEnabled="{Binding !IsBusy}"
+                    shad:ButtonAssist.ShowProgress="{Binding IsBusy}"
+                    AutomationProperties.Name="Refresh dashboard"
+                    input:KeyboardNavigation.TabIndex="80">
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8">
+                    <Viewbox Width="16"
+                             Height="16">
+                        <TextBlock Classes="DashboardLucideIcon"
+                                   Text="&#57672;"
+                                   Foreground="{DynamicResource ForegroundColor}" />
+                    </Viewbox>
+                    <TextBlock Text="Refresh" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <Border IsVisible="{Binding ErrorMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}"
+                Padding="12"
+                Background="{DynamicResource DestructiveColor10}"
+                BorderBrush="{DynamicResource DestructiveColor50}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource LgCornerRadius}">
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Classes="Small Error"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <Border IsVisible="{Binding NavigationMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}"
+                Padding="12"
+                Background="{DynamicResource SelectionColor}"
+                BorderBrush="{DynamicResource BorderColor}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource LgCornerRadius}">
+            <TextBlock Text="{Binding NavigationMessage}"
+                       Classes="Small"
+                       Foreground="{DynamicResource ForegroundColor}"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <Border IsVisible="{Binding IsBusy}"
+                Padding="12"
+                Background="{DynamicResource SelectionColor}"
+                BorderBrush="{DynamicResource BorderColor}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource LgCornerRadius}">
+            <TextBlock Text="Loading your dashboard..."
+                       Classes="Small Muted"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <shad:BreakpointViewPort HorizontalAlignment="Stretch">
+            <shad:BreakpointView Breakpoint="LgAndUp">
+                <Grid ColumnDefinitions="2*,*,*,*"
+                      ColumnSpacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource CaloriesMetricTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Grid.Column="1"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource TargetMetricTemplate}"
+                                    HorizontalContentAlignment="Stretch"
+                                    IsVisible="{Binding ShowGoalProgress}" />
+                    <ContentControl Grid.Column="2"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource RemainingMetricTemplate}"
+                                    HorizontalContentAlignment="Stretch"
+                                    IsVisible="{Binding ShowGoalProgress}" />
+                    <ContentControl Grid.Column="3"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource ProgressMetricTemplate}"
+                                    HorizontalContentAlignment="Stretch"
+                                    IsVisible="{Binding ShowGoalProgress}" />
+                </Grid>
+            </shad:BreakpointView>
+
+            <shad:BreakpointView Breakpoint="Md">
+                <StackPanel Spacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource CaloriesMetricTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <Grid ColumnDefinitions="*,*,*"
+                          ColumnSpacing="16"
+                          IsVisible="{Binding ShowGoalProgress}">
+                        <ContentControl Content="{Binding}"
+                                        ContentTemplate="{StaticResource TargetMetricTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                        <ContentControl Grid.Column="1"
+                                        Content="{Binding}"
+                                        ContentTemplate="{StaticResource RemainingMetricTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                        <ContentControl Grid.Column="2"
+                                        Content="{Binding}"
+                                        ContentTemplate="{StaticResource ProgressMetricTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                    </Grid>
+                </StackPanel>
+            </shad:BreakpointView>
+
+            <shad:BreakpointView Breakpoint="MdAndDown">
+                <StackPanel Spacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource CaloriesMetricTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <UniformGrid Columns="2"
+                                 Rows="2"
+                                 HorizontalAlignment="Stretch"
+                                 IsVisible="{Binding ShowGoalProgress}">
+                        <ContentControl Margin="0,0,8,8"
+                                        Content="{Binding}"
+                                        ContentTemplate="{StaticResource TargetMetricTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                        <ContentControl Margin="8,0,0,8"
+                                        Content="{Binding}"
+                                        ContentTemplate="{StaticResource RemainingMetricTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                        <ContentControl Margin="0,8,8,0"
+                                        Content="{Binding}"
+                                        ContentTemplate="{StaticResource ProgressMetricTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                    </UniformGrid>
+                </StackPanel>
+            </shad:BreakpointView>
+        </shad:BreakpointViewPort>
+
+        <shad:BreakpointViewPort HorizontalAlignment="Stretch"
+                                 IsVisible="{Binding ShowGoalProgress}">
+            <shad:BreakpointView Breakpoint="LgAndUp">
+                <Grid ColumnDefinitions="5*,3*,3*"
+                      ColumnSpacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource TodayProgressTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Grid.Column="1"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource GoalOverviewTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Grid.Column="2"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource ThisWeekTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                </Grid>
+            </shad:BreakpointView>
+
+            <shad:BreakpointView Breakpoint="Md">
+                <StackPanel Spacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource TodayProgressTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="16">
+                        <ContentControl Content="{Binding}"
+                                        ContentTemplate="{StaticResource GoalOverviewTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                        <ContentControl Grid.Column="1"
+                                        Content="{Binding}"
+                                        ContentTemplate="{StaticResource ThisWeekTemplate}"
+                                        HorizontalContentAlignment="Stretch" />
+                    </Grid>
+                </StackPanel>
+            </shad:BreakpointView>
+
+            <shad:BreakpointView Breakpoint="MdAndDown">
+                <StackPanel Spacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource TodayProgressTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource GoalOverviewTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource ThisWeekTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                </StackPanel>
+            </shad:BreakpointView>
+        </shad:BreakpointViewPort>
+
+        <shad:Card Padding="20"
+                   HorizontalContentAlignment="Stretch"
+                   Background="{DynamicResource CardBackgroundColor}"
+                   BorderBrush="{DynamicResource BorderColor}"
+                   BorderThickness="1"
+                   HasShadow="False"
+                   IsVisible="{Binding ShowNoGoalPrompt}">
+            <StackPanel Spacing="14">
+                <Grid ColumnDefinitions="20,*"
+                      ColumnSpacing="10">
+                    <Viewbox Width="18"
+                             Height="18">
+                        <TextBlock Classes="DashboardLucideIcon"
+                                   Text="&#57599;"
+                                   Foreground="{DynamicResource ForegroundColor}" />
+                    </Viewbox>
+                    <StackPanel Grid.Column="1"
+                                Spacing="4">
+                        <shad:CardTitle Content="No daily goal yet"
+                                        FontSize="18"
+                                        TextBlock.TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   Classes="Small Muted"
+                                   TextWrapping="Wrap" />
+                        <TextBlock Text="Set a daily calorie goal to track your progress against a target."
+                                   Classes="Small Muted"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+                <WrapPanel Orientation="Horizontal"
+                           ItemSpacing="10"
+                           LineSpacing="10">
+                    <Button Content="Set Goal"
+                            Classes="Primary"
+                            Command="{Binding NavigateToGoalCommand}"
+                            IsEnabled="{Binding !IsBusy}"
+                            input:KeyboardNavigation.TabIndex="82" />
+                    <Button Content="Record Activity"
+                            Classes="Secondary"
+                            Command="{Binding NavigateToRecordActivityCommand}"
+                            IsEnabled="{Binding !IsBusy}"
+                            input:KeyboardNavigation.TabIndex="81" />
+                </WrapPanel>
+            </StackPanel>
+        </shad:Card>
+
+        <shad:BreakpointViewPort HorizontalAlignment="Stretch">
+            <shad:BreakpointView Breakpoint="LgAndUp">
+                <Grid ColumnDefinitions="3*,2*"
+                      ColumnSpacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource WeeklyChartTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Grid.Column="1"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource RecentActivityTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                </Grid>
+            </shad:BreakpointView>
+
+            <shad:BreakpointView Breakpoint="Md">
+                <StackPanel Spacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource WeeklyChartTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource RecentActivityTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                </StackPanel>
+            </shad:BreakpointView>
+
+            <shad:BreakpointView Breakpoint="MdAndDown">
+                <StackPanel Spacing="16">
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource WeeklyChartTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource RecentActivityTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
+                </StackPanel>
+            </shad:BreakpointView>
+                </shad:BreakpointViewPort>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

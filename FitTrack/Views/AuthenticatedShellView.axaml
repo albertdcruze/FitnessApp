@@ -1,0 +1,231 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitTrack.ViewModels"
+             xmlns:shad="using:ShadUI"
+             x:Class="FitTrack.Views.AuthenticatedShellView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <UserControl.Resources>
+        <FontFamily x:Key="ShellLucideIconFont">avares://FitTrack/Assets/Fonts#lucide</FontFamily>
+        <FontFamily x:Key="ShellBrandFont">avares://FitTrack/Assets/Fonts#Wah Iki</FontFamily>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.LucideIcon">
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="18" />
+            <Setter Property="FontFamily" Value="{StaticResource ShellLucideIconFont}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="ExtraLight" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.ShellBrand">
+            <Setter Property="FontFamily" Value="{StaticResource ShellBrandFont}" />
+            <Setter Property="FontSize" Value="44" />
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundColor}" />
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.ShellBrandCompact">
+            <Setter Property="FontFamily" Value="{StaticResource ShellBrandFont}" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid ColumnDefinitions="Auto,*"
+          RowDefinitions="64,*"
+          Background="{DynamicResource BackgroundColor}">
+        <shad:Sidebar Grid.RowSpan="2"
+                      Grid.Column="0"
+                      Width="255"
+                      MinWidth="48"
+                      Padding="8"
+                      ItemIconContentSpacing="12"
+                      Expanded="{Binding IsSidebarExpanded, Mode=OneWay}"
+                      CurrentRoute="{Binding CurrentRouteName}"
+                      Background="{DynamicResource CardBackgroundColor}"
+                      BorderBrush="{DynamicResource BorderColor}"
+                      BorderThickness="0,0,1,0">
+            <shad:Sidebar.Header>
+                <Grid Height="40"
+                      Margin="8,8,0,8"
+                      ColumnDefinitions="32,*"
+                      ColumnSpacing="10">
+                    <TextBlock Classes="ShellBrandCompact"
+                               Text="F"
+                               IsVisible="{Binding !IsSidebarExpanded}"
+                               Margin="-12,0,0,0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                IsVisible="{Binding IsSidebarExpanded}"
+                                VerticalAlignment="Center"
+                                Spacing="0">
+                        <TextBlock Classes="ShellBrand"
+                                   Text="FitTrack" />
+                    </StackPanel>
+                </Grid>
+            </shad:Sidebar.Header>
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="Workspace"
+                           IsVisible="{Binding IsSidebarExpanded}"
+                           Margin="8,4,8,6"
+                           FontSize="12"
+                           FontWeight="DemiBold"
+                           Foreground="{DynamicResource MutedColor}" />
+
+                <shad:SidebarItem Content="Dashboard"
+                                  Route="Dashboard"
+                                  Command="{Binding NavigateDashboardCommand}"
+                                  ToolTip.Tip="Dashboard"
+                                  ToolTip.Placement="Right"
+                                  AutomationProperties.Name="Dashboard">
+                    <shad:SidebarItem.Icon>
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="LucideIcon"
+                                       Text="&#57793;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                    </shad:SidebarItem.Icon>
+                </shad:SidebarItem>
+
+                <shad:SidebarItem Content="Set Goal"
+                                  Route="Goal"
+                                  Command="{Binding NavigateGoalCommand}"
+                                  ToolTip.Tip="Set Goal"
+                                  ToolTip.Placement="Right"
+                                  AutomationProperties.Name="Set Goal">
+                    <shad:SidebarItem.Icon>
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="LucideIcon"
+                                       Text="&#57732;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                    </shad:SidebarItem.Icon>
+                </shad:SidebarItem>
+
+                <shad:SidebarItem Content="Record Activity"
+                                  Route="RecordActivity"
+                                  Command="{Binding NavigateRecordActivityCommand}"
+                                  ToolTip.Tip="Record Activity"
+                                  ToolTip.Placement="Right"
+                                  AutomationProperties.Name="Record Activity">
+                    <shad:SidebarItem.Icon>
+                        <Viewbox Width="18"
+                                 Height="18">
+                            <TextBlock Classes="LucideIcon"
+                                       Text="&#57620;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                    </shad:SidebarItem.Icon>
+                </shad:SidebarItem>
+            </StackPanel>
+
+            <shad:Sidebar.Footer>
+                <StackPanel Spacing="4">
+                    <Grid Height="44"
+                          ColumnDefinitions="32,*"
+                          ColumnSpacing="10"
+                          ToolTip.Tip="{Binding AuthenticatedUsername}"
+                          ToolTip.Placement="Right">
+                        <shad:Avatar Width="32"
+                                     Height="32"
+                                     VerticalAlignment="Center"
+                                     CornerRadius="{DynamicResource LgCornerRadius}"
+                                     Fallback="FA"
+                                     Source="/Assets/Images/avatar-default.png" />
+                        <Grid Grid.Column="1"
+                              IsVisible="{Binding IsSidebarExpanded}"
+                              ColumnDefinitions="*,16"
+                              ColumnSpacing="8">
+                            <StackPanel VerticalAlignment="Center"
+                                        Spacing="0">
+                                <TextBlock Text="{Binding AuthenticatedUsername}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="Fitness account"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource MutedColor}" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    <shad:SidebarItem Content="Log out"
+                                      GroupName="ShellActions"
+                                      Background="{DynamicResource SecondaryColor50}"
+                                      Foreground="{DynamicResource PrimaryColor}"
+                                      Command="{Binding ShellLogoutCommand}"
+                                      ToolTip.Tip="Log out"
+                                      ToolTip.Placement="Right"
+                                      AutomationProperties.Name="Log out"
+                                      AutomationProperties.HelpText="End the current FitTrack session and return to sign in.">
+                        <shad:SidebarItem.Icon>
+                            <Viewbox Width="18"
+                                     Height="18">
+                                <TextBlock Classes="LucideIcon"
+                                           Text="&#57618;"
+                                           Foreground="{DynamicResource MutedColor}" />
+                            </Viewbox>
+                        </shad:SidebarItem.Icon>
+                    </shad:SidebarItem>
+                </StackPanel>
+            </shad:Sidebar.Footer>
+        </shad:Sidebar>
+
+        <Border Grid.Row="0"
+                Grid.Column="1"
+                Height="64"
+                Background="{DynamicResource BackgroundColor}"
+                BorderBrush="{DynamicResource BorderColor}"
+                BorderThickness="0,0,0,1">
+            <StackPanel Margin="16,0"
+                        Orientation="Horizontal"
+                        Spacing="14"
+                        VerticalAlignment="Center">
+                <ToggleButton Width="32"
+                              Height="32"
+                              MinHeight="32"
+                              Padding="7"
+                              IsChecked="{Binding IsSidebarExpanded, Mode=OneWay}"
+                              Command="{Binding ToggleSidebarCommand}"
+                              Theme="{DynamicResource SideTogglerTheme}"
+                              AutomationProperties.Name="Toggle sidebar"
+                              AutomationProperties.HelpText="Expand or collapse the application sidebar.">
+                    <Viewbox Width="18"
+                             Height="18">
+                        <TextBlock Classes="LucideIcon"
+                                   Text="&#57646;"
+                                   Foreground="{DynamicResource ForegroundColor}" />
+                    </Viewbox>
+                </ToggleButton>
+                <Border Width="1"
+                        Height="16"
+                        Background="{DynamicResource BorderColor}" />
+                <TextBlock Text="{Binding CurrentPageTitle}"
+                           VerticalAlignment="Center"
+                           FontSize="14"
+                           FontWeight="Medium"
+                           Foreground="{DynamicResource ForegroundColor}" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Padding="20"
+                Background="{DynamicResource BackgroundColor}">
+            <ContentControl HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Content="{Binding CurrentViewModel}" />
+        </Border>
+    </Grid>
+</UserControl>

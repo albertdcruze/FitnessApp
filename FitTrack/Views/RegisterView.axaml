@@ -1,0 +1,198 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitTrack.ViewModels"
+             xmlns:shad="using:ShadUI"
+             xmlns:converters="using:Avalonia.Data.Converters"
+             xmlns:input="using:Avalonia.Input"
+             x:Class="FitTrack.Views.RegisterView"
+             x:DataType="vm:RegisterViewModel">
+
+    <UserControl.Styles>
+        <Style Selector="StackPanel.register-content">
+            <Setter Property="Spacing" Value="24" />
+        </Style>
+        <Style Selector="TextBlock.register-app-heading">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <ContainerQuery Name="register-page" Query="max-width:720">
+            <Style Selector="StackPanel.register-content">
+                <Setter Property="Spacing" Value="0" />
+            </Style>
+            <Style Selector="TextBlock.register-app-heading">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+        </ContainerQuery>
+    </UserControl.Styles>
+
+    <Grid Container.Name="register-page"
+          Container.Sizing="Width"
+          Background="{DynamicResource WindowBackgroundColor}">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch">
+            <Grid Margin="24"
+                  HorizontalAlignment="Stretch">
+                <StackPanel Classes="register-content"
+                            MaxWidth="375"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center">
+                    <TextBlock Classes="register-app-heading auth-brand-heading"
+                               Text="FitTrack" />
+
+                    <shad:Card HorizontalAlignment="Stretch"
+                               VerticalAlignment="Center"
+                               HorizontalContentAlignment="Stretch"
+                               VerticalContentAlignment="Top"
+                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                               ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                               HasShadow="True">
+                        <shad:Card.Header>
+                            <StackPanel Spacing="6">
+                                <shad:CardTitle FontSize="30"
+                                                FontWeight="Bold">
+                                    Create an account
+                                </shad:CardTitle>
+                                <shad:CardDescription>
+                                    <TextBlock Text="Use a few simple details to get started."
+                                               TextWrapping="Wrap" />
+                                </shad:CardDescription>
+                            </StackPanel>
+                        </shad:Card.Header>
+
+                        <StackPanel Spacing="16">
+                            <Border Background="{DynamicResource ErrorColor10}"
+                                    BorderBrush="{DynamicResource ErrorColor}"
+                                    BorderThickness="1"
+                                    CornerRadius="{DynamicResource LgCornerRadius}"
+                                    Padding="10"
+                                    IsVisible="{Binding ErrorMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
+                                <TextBlock Text="{Binding ErrorMessage}"
+                                           FontSize="14"
+                                           Foreground="{DynamicResource ErrorColor}"
+                                           TextWrapping="Wrap" />
+                            </Border>
+
+                            <Border Background="{DynamicResource SuccessColor10}"
+                                    BorderBrush="{DynamicResource SuccessColor}"
+                                    BorderThickness="1"
+                                    CornerRadius="{DynamicResource LgCornerRadius}"
+                                    Padding="10"
+                                    IsVisible="{Binding StatusMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}">
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           FontSize="14"
+                                           Foreground="{DynamicResource SuccessColor}"
+                                           TextWrapping="Wrap" />
+                            </Border>
+
+                            <StackPanel Spacing="8">
+                                <TextBox Text="{Binding Username, Mode=TwoWay}"
+                                         shad:ControlAssist.Label="Username"
+                                         AutomationProperties.Name="Username"
+                                         AutomationProperties.HelpText="1 to 30 characters. Letters and numbers only."
+                                         input:KeyboardNavigation.TabIndex="1" />
+                                <TextBlock Text="1 to 30 characters. Letters and numbers only."
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="Password"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Foreground="{DynamicResource ForegroundColor}" />
+                                    <ToggleButton Grid.Column="1"
+                                                  Classes="Default NoPressedAnimation"
+                                                  Content="{Binding PasswordVisibilityActionText}"
+                                                  IsChecked="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                                  MinHeight="20"
+                                                  Height="20"
+                                                  Padding="0"
+                                                  BorderThickness="0"
+                                                  Background="{DynamicResource BackgroundColor}"
+                                                  Foreground="{DynamicResource ForegroundColor}"
+                                                  FontSize="12"
+                                                  AutomationProperties.Name="{Binding PasswordVisibilityActionText}"
+                                                  AutomationProperties.HelpText="Show or hide the entered password."
+                                                  input:KeyboardNavigation.TabIndex="2" />
+                                </Grid>
+                                <TextBox PasswordChar="•"
+                                         RevealPassword="{Binding IsPasswordVisible}"
+                                         Text="{Binding Password, Mode=TwoWay}"
+                                         AutomationProperties.Name="Password"
+                                         AutomationProperties.HelpText="Exactly 12 characters with at least one uppercase and one lowercase letter."
+                                         input:KeyboardNavigation.TabIndex="3" />
+                                <TextBlock Text="Exactly 12 characters with at least one uppercase and one lowercase letter."
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="Confirm Password"
+                                               VerticalAlignment="Center"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Foreground="{DynamicResource ForegroundColor}" />
+                                    <ToggleButton Grid.Column="1"
+                                                  Classes="Default NoPressedAnimation"
+                                                  Content="{Binding ConfirmPasswordVisibilityActionText}"
+                                                  IsChecked="{Binding IsConfirmPasswordVisible, Mode=TwoWay}"
+                                                  MinHeight="20"
+                                                  Height="20"
+                                                  Padding="0"
+                                                  BorderThickness="0"
+                                                  Background="{DynamicResource BackgroundColor}"
+                                                  Foreground="{DynamicResource ForegroundColor}"
+                                                  FontSize="12"
+                                                  AutomationProperties.Name="{Binding ConfirmPasswordVisibilityActionText}"
+                                                  AutomationProperties.HelpText="Show or hide the confirmed password."
+                                                  input:KeyboardNavigation.TabIndex="4" />
+                                </Grid>
+                                <TextBox PasswordChar="•"
+                                         RevealPassword="{Binding IsConfirmPasswordVisible}"
+                                         Text="{Binding ConfirmPassword, Mode=TwoWay}"
+                                         AutomationProperties.Name="Confirm Password"
+                                         AutomationProperties.HelpText="Enter the same password again."
+                                         input:KeyboardNavigation.TabIndex="5" />
+                                <TextBlock Text="Enter the same password again."
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <shad:Card.Footer>
+                            <StackPanel Spacing="8">
+                                <Button Content="Register"
+                                        Classes="Primary"
+                                        IsDefault="True"
+                                        Command="{Binding RegisterCommand}"
+                                        IsEnabled="{Binding !IsBusy}"
+                                        MinHeight="36"
+                                        Height="36"
+                                        Padding="16,8"
+                                        HorizontalAlignment="Stretch"
+                                        shad:ButtonAssist.ShowProgress="{Binding IsBusy}"
+                                        input:KeyboardNavigation.TabIndex="6" />
+                                <Button Content="Back to Sign In"
+                                        Classes="Secondary"
+                                        Command="{Binding BackToLoginCommand}"
+                                        IsEnabled="{Binding !IsBusy}"
+                                        MinHeight="36"
+                                        Height="36"
+                                        Padding="16,8"
+                                        HorizontalAlignment="Stretch"
+                                        input:KeyboardNavigation.TabIndex="7" />
+                            </StackPanel>
+                        </shad:Card.Footer>
+                    </shad:Card>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

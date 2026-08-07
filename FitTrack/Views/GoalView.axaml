@@ -1,0 +1,431 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:FitTrack.ViewModels"
+             xmlns:shad="using:ShadUI"
+             xmlns:converters="using:Avalonia.Data.Converters"
+             xmlns:input="using:Avalonia.Input"
+             x:Class="FitTrack.Views.GoalView"
+             x:DataType="vm:GoalViewModel">
+
+    <UserControl.Resources>
+        <FontFamily x:Key="GoalLucideIconFont">avares://FitTrack/Assets/Fonts#lucide</FontFamily>
+
+        <DataTemplate x:Key="GoalFormTemplate"
+                      x:DataType="vm:GoalViewModel">
+            <shad:Card MinHeight="430"
+                       Padding="28"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="24,*"
+                          ColumnSpacing="12">
+                        <Viewbox Width="24"
+                                 Height="24"
+                                 VerticalAlignment="Top">
+                            <TextBlock Classes="GoalLucideIcon"
+                                       Text="&#57732;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <StackPanel Grid.Column="1"
+                                    Spacing="8">
+                            <shad:CardTitle Content="Daily calorie goal"
+                                            FontSize="20"
+                                            TextBlock.TextWrapping="Wrap" />
+                            <shad:CardDescription Content="Set a realistic daily calorie target to keep your activity progress focused and measurable."
+                                                  TextBlock.TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </shad:Card.Header>
+
+                <StackPanel Spacing="16">
+                    <TextBox Text="{Binding GoalInput, Mode=TwoWay}"
+                             PlaceholderText="Enter goal calories"
+                             shad:ControlAssist.Label="Goal calories"
+                             shad:ControlAssist.Hint="1 to 5,000 estimated calories. Whole numbers only."
+                             AutomationProperties.Name="Goal calories"
+                             AutomationProperties.HelpText="Enter a whole number from 1 to 5,000 estimated calories."
+                             input:KeyboardNavigation.TabIndex="1" />
+
+                    <Grid ColumnDefinitions="*,*,*,*"
+                          ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Content="300"
+                                Classes="Secondary GoalPreset"
+                                Classes.preset-selected="{Binding IsPreset300Selected}"
+                                Command="{Binding ApplyGoalPresetCommand}"
+                                CommandParameter="300"
+                                IsEnabled="{Binding !IsBusy}"
+                                AutomationProperties.Name="Use 300 calorie goal"
+                                input:KeyboardNavigation.TabIndex="2" />
+                        <Button Grid.Column="1"
+                                Content="500"
+                                Classes="Secondary GoalPreset"
+                                Classes.preset-selected="{Binding IsPreset500Selected}"
+                                Command="{Binding ApplyGoalPresetCommand}"
+                                CommandParameter="500"
+                                IsEnabled="{Binding !IsBusy}"
+                                AutomationProperties.Name="Use 500 calorie goal"
+                                input:KeyboardNavigation.TabIndex="3" />
+                        <Button Grid.Column="2"
+                                Content="750"
+                                Classes="Secondary GoalPreset"
+                                Classes.preset-selected="{Binding IsPreset750Selected}"
+                                Command="{Binding ApplyGoalPresetCommand}"
+                                CommandParameter="750"
+                                IsEnabled="{Binding !IsBusy}"
+                                AutomationProperties.Name="Use 750 calorie goal"
+                                input:KeyboardNavigation.TabIndex="4" />
+                        <Button Grid.Column="3"
+                                Content="1000"
+                                Classes="Secondary GoalPreset"
+                                Classes.preset-selected="{Binding IsPreset1000Selected}"
+                                Command="{Binding ApplyGoalPresetCommand}"
+                                CommandParameter="1000"
+                                IsEnabled="{Binding !IsBusy}"
+                                AutomationProperties.Name="Use 1000 calorie goal"
+                                input:KeyboardNavigation.TabIndex="5" />
+                    </Grid>
+
+                    <Border IsVisible="{Binding ErrorMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}"
+                            Padding="12"
+                            Background="{DynamicResource DestructiveColor10}"
+                            BorderBrush="{DynamicResource DestructiveColor50}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}">
+                        <Grid ColumnDefinitions="16,*"
+                              ColumnSpacing="8">
+                            <Viewbox Width="16"
+                                     Height="16"
+                                     VerticalAlignment="Center">
+                                <TextBlock Classes="GoalLucideIcon"
+                                           Text="&#57467;"
+                                           Foreground="{DynamicResource DestructiveColor}" />
+                            </Viewbox>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding ErrorMessage}"
+                                       Classes="Small Error"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+
+                    <Border IsVisible="{Binding StatusMessage, Converter={x:Static converters:StringConverters.IsNotNullOrEmpty}}"
+                            Padding="12"
+                            Background="{DynamicResource InfoColor5}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}">
+                        <Grid ColumnDefinitions="16,*"
+                              ColumnSpacing="8">
+                            <Viewbox Width="16"
+                                     Height="16"
+                                     VerticalAlignment="Center">
+                                <TextBlock Classes="GoalLucideIcon"
+                                           Text="&#57599;"
+                                           Foreground="{DynamicResource ForegroundColor}" />
+                            </Viewbox>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding StatusMessage}"
+                                       Classes="Small"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+
+                    <Border IsVisible="{Binding IsBusy}"
+                            Padding="12"
+                            Background="{DynamicResource SelectionColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}">
+                        <Grid ColumnDefinitions="16,*"
+                              ColumnSpacing="8">
+                            <Viewbox Width="16"
+                                     Height="16"
+                                     VerticalAlignment="Center">
+                                <TextBlock Classes="GoalLucideIcon"
+                                           Text="&#57614;"
+                                           Foreground="{DynamicResource ForegroundColor}" />
+                            </Viewbox>
+                            <TextBlock Grid.Column="1"
+                                       Text="Loading your goal..."
+                                       Classes="Small Muted"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <shad:Card.Footer>
+                    <Button Content="Save goal"
+                            Classes="Primary"
+                            IsDefault="True"
+                            Command="{Binding SaveGoalCommand}"
+                            IsEnabled="{Binding !IsBusy}"
+                            shad:ButtonAssist.ShowProgress="{Binding IsBusy}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            input:KeyboardNavigation.TabIndex="6" />
+                </shad:Card.Footer>
+            </shad:Card>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GoalOverviewTemplate"
+                      x:DataType="vm:GoalViewModel">
+            <shad:Card MinHeight="430"
+                       Padding="28"
+                       HorizontalContentAlignment="Stretch"
+                       Background="{DynamicResource CardBackgroundColor}"
+                       BorderBrush="{DynamicResource BorderColor}"
+                       BorderThickness="1"
+                       HasShadow="False">
+                <shad:Card.Header>
+                    <Grid ColumnDefinitions="24,*"
+                          ColumnSpacing="12">
+                        <Viewbox Width="24"
+                                 Height="24"
+                                 VerticalAlignment="Center">
+                            <TextBlock Classes="GoalLucideIcon"
+                                       Text="&#57894;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <shad:CardTitle Grid.Column="1"
+                                        Content="Goal overview"
+                                        FontSize="20"
+                                        TextBlock.TextWrapping="Wrap" />
+                    </Grid>
+                </shad:Card.Header>
+
+                <StackPanel Spacing="20">
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Current daily target"
+                                   Classes="Small Muted"
+                                   TextWrapping="Wrap" />
+
+                        <TextBlock Text="{Binding ExistingTargetCalories, StringFormat='{}{0:0.##}'}"
+                                   FontSize="56"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundColor}"
+                                   TextWrapping="Wrap"
+                                   IsVisible="{Binding ShowExistingGoal}" />
+                        <TextBlock Text="—"
+                                   FontSize="56"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource ForegroundColor}"
+                                   IsVisible="{Binding !HasLoaded}" />
+                        <TextBlock Text="Not set"
+                                   Classes="h2"
+                                   Foreground="{DynamicResource ForegroundColor}"
+                                   TextWrapping="Wrap"
+                                   IsVisible="{Binding ShowNoGoalPrompt}" />
+
+                        <TextBlock Text="estimated calories"
+                                   Classes="Muted"
+                                   TextWrapping="Wrap"
+                                   IsVisible="{Binding ShowExistingGoal}" />
+                        <TextBlock Text="Save a goal to activate your daily target."
+                                   Classes="Muted"
+                                   TextWrapping="Wrap"
+                                   IsVisible="{Binding ShowNoGoalPrompt}" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <Grid ColumnDefinitions="*,Auto"
+                              ColumnSpacing="12">
+                            <TextBlock Text="Goal range position"
+                                       Classes="Small"
+                                       Foreground="{DynamicResource ForegroundColor}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Grid.Column="1"
+                                       Text="5,000 max"
+                                       Classes="Small Muted"
+                                       TextAlignment="Right" />
+                        </Grid>
+                        <ProgressBar Minimum="0"
+                                     Maximum="5000"
+                                     Value="{Binding ExistingTargetCalories}"
+                                     Height="8"
+                                     HorizontalAlignment="Stretch"
+                                     Background="{DynamicResource BorderColor}"
+                                     Foreground="{DynamicResource PrimaryColor}"
+                                     CornerRadius="{DynamicResource FullCornerRadius}"
+                                     AutomationProperties.Name="Goal range position"
+                                     AutomationProperties.HelpText="Shows the saved goal within the allowed range of 1 to 5,000 estimated calories." />
+                    </StackPanel>
+
+                    <Border Padding="16"
+                            Background="{DynamicResource SecondaryColor50}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource LgCornerRadius}">
+                        <Grid ColumnDefinitions="*,*,*"
+                              ColumnSpacing="12">
+                            <StackPanel Grid.Column="0"
+                                        Spacing="4">
+                                <TextBlock Text="Allowed range"
+                                           Classes="Caption Muted"
+                                           TextWrapping="Wrap" />
+                                <TextBlock Text="1–5,000 kcal"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1"
+                                        Spacing="4">
+                                <TextBlock Text="Goal status"
+                                           Classes="Caption Muted"
+                                           TextWrapping="Wrap" />
+                                <TextBlock Text="Saved"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           IsVisible="{Binding ShowExistingGoal}" />
+                                <TextBlock Text="Not set"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           IsVisible="{Binding ShowNoGoalPrompt}" />
+                                <TextBlock Text="Loading"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           IsVisible="{Binding !HasLoaded}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2"
+                                        Spacing="4">
+                                <TextBlock Text="Input format"
+                                           Classes="Caption Muted"
+                                           TextWrapping="Wrap" />
+                                <TextBlock Text="Whole number"
+                                           Classes="Small"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource ForegroundColor}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="16,*"
+                          ColumnSpacing="8">
+                        <Viewbox Width="16"
+                                 Height="16"
+                                 VerticalAlignment="Center">
+                            <TextBlock Classes="GoalLucideIcon"
+                                       Text="&#57599;"
+                                       Foreground="{DynamicResource MutedColor}" />
+                        </Viewbox>
+                        <TextBlock Grid.Column="1"
+                                   Text="Update your target whenever your routine or priorities change."
+                                   Classes="Caption Muted"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                </StackPanel>
+            </shad:Card>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.GoalLucideIcon">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="FontFamily" Value="{StaticResource GoalLucideIconFont}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="ExtraLight" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.GoalPreset">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.GoalPreset.preset-selected">
+            <Setter Property="Background" Value="{DynamicResource SelectionColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor50}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer HorizontalAlignment="Stretch"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalContentAlignment="Stretch">
+        <Grid ColumnDefinitions="*,16">
+            <StackPanel Grid.Column="0"
+                        MaxWidth="1240"
+                        HorizontalAlignment="Stretch"
+                        Spacing="20">
+                <TextBlock Text="Set daily goal"
+                           Classes="h2"
+                           Foreground="{DynamicResource ForegroundColor}"
+                           TextWrapping="Wrap" />
+
+                <shad:BreakpointViewPort HorizontalAlignment="Stretch">
+                    <shad:BreakpointView Breakpoint="Sm"
+                                         Invert="True">
+                        <Grid ColumnDefinitions="4*,5*"
+                              HorizontalAlignment="Stretch"
+                              ColumnSpacing="20">
+                            <ContentControl Content="{Binding}"
+                                            ContentTemplate="{StaticResource GoalFormTemplate}"
+                                            HorizontalContentAlignment="Stretch" />
+                            <ContentControl Grid.Column="1"
+                                            Content="{Binding}"
+                                            ContentTemplate="{StaticResource GoalOverviewTemplate}"
+                                            HorizontalContentAlignment="Stretch" />
+                        </Grid>
+                    </shad:BreakpointView>
+
+                    <shad:BreakpointView Breakpoint="Sm">
+                        <StackPanel HorizontalAlignment="Stretch"
+                                    Spacing="16">
+                            <ContentControl Content="{Binding}"
+                                            ContentTemplate="{StaticResource GoalFormTemplate}"
+                                            HorizontalContentAlignment="Stretch" />
+                            <ContentControl Content="{Binding}"
+                                            ContentTemplate="{StaticResource GoalOverviewTemplate}"
+                                            HorizontalContentAlignment="Stretch" />
+                        </StackPanel>
+                    </shad:BreakpointView>
+                </shad:BreakpointViewPort>
+
+                <shad:Card Padding="24"
+                           HorizontalContentAlignment="Stretch"
+                           Background="{DynamicResource CardBackgroundColor}"
+                           BorderBrush="{DynamicResource BorderColor}"
+                           BorderThickness="1"
+                           HasShadow="False">
+                    <Grid ColumnDefinitions="24,*"
+                          ColumnSpacing="12">
+                        <Viewbox Width="24"
+                                 Height="24"
+                                 VerticalAlignment="Top">
+                            <TextBlock Classes="GoalLucideIcon"
+                                       Text="&#57599;"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                        </Viewbox>
+                        <StackPanel Grid.Column="1"
+                                    Spacing="10">
+                            <TextBlock Text="Goal tips"
+                                       Classes="h4"
+                                       Foreground="{DynamicResource ForegroundColor}" />
+                            <TextBlock Text="•  Start with a realistic goal you can maintain consistently."
+                                       Classes="Small Muted"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="•  Adjust your goal as your activity level and habits improve."
+                                       Classes="Small Muted"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="•  Focus on consistency—not perfection—to build lasting results."
+                                       Classes="Small Muted"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </shad:Card>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
