@@ -113,6 +113,12 @@
                                      AutomationProperties.HelpText="Enter your FitTrack password."
                                      input:KeyboardNavigation.TabIndex="3" />
                         </StackPanel>
+
+                        <CheckBox Content="Remember me"
+                                  IsChecked="{Binding RememberMe, Mode=TwoWay}"
+                                  AutomationProperties.Name="Remember me"
+                                  AutomationProperties.HelpText="Save your username and password securely for the next login."
+                                  input:KeyboardNavigation.TabIndex="4" />
                     </StackPanel>
 
                     <shad:Card.Footer>
@@ -127,7 +133,7 @@
                                     Padding="16,8"
                                     HorizontalAlignment="Stretch"
                                     shad:ButtonAssist.ShowProgress="{Binding IsBusy}"
-                                    input:KeyboardNavigation.TabIndex="4" />
+                                    input:KeyboardNavigation.TabIndex="5" />
                             <Button Content="Create Account"
                                     Classes="Secondary"
                                     Command="{Binding GoToRegisterCommand}"
@@ -136,7 +142,7 @@
                                     Height="36"
                                     Padding="16,8"
                                     HorizontalAlignment="Stretch"
-                                    input:KeyboardNavigation.TabIndex="5" />
+                                    input:KeyboardNavigation.TabIndex="6" />
                         </StackPanel>
                     </shad:Card.Footer>
                 </shad:Card>

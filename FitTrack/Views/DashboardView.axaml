@@ -312,102 +312,6 @@
             </shad:Card>
         </DataTemplate>
 
-        <DataTemplate x:Key="GoalOverviewTemplate"
-                      x:DataType="vm:DashboardViewModel">
-            <shad:Card MinHeight="300"
-                       Padding="24"
-                       HorizontalContentAlignment="Stretch"
-                       Background="{DynamicResource CardBackgroundColor}"
-                       BorderBrush="{DynamicResource BorderColor}"
-                       BorderThickness="1"
-                       HasShadow="False">
-                <shad:Card.Header>
-                    <Grid ColumnDefinitions="20,*"
-                          ColumnSpacing="10">
-                        <Viewbox Width="18"
-                                 Height="18">
-                            <TextBlock Classes="DashboardLucideIcon"
-                                       Text="&#57557;"
-                                       Foreground="{DynamicResource ForegroundColor}" />
-                        </Viewbox>
-                        <shad:CardTitle Grid.Column="1"
-                                        Content="Goal overview"
-                                        FontSize="18"
-                                        TextBlock.TextWrapping="Wrap" />
-                    </Grid>
-                </shad:Card.Header>
-        
-                <StackPanel Spacing="12">
-                    <Grid ColumnDefinitions="*,Auto"
-                          ColumnSpacing="12">
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="Daily goal"
-                                       Classes="Caption Muted" />
-                            <TextBlock Text="{Binding TargetCalories, StringFormat='{}{0:0.##}'}"
-                                       FontSize="28"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1"
-                                    Spacing="4"
-                                    HorizontalAlignment="Right">
-                            <TextBlock Text="Current percentage"
-                                       Classes="Caption Muted"
-                                       TextAlignment="Right"
-                                       TextWrapping="Wrap" />
-                            <TextBlock Text="{Binding ProgressPercentage, StringFormat='{}{0:0.##}%'}"
-                                       FontSize="20"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource ForegroundColor}"
-                                       TextAlignment="Right"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Grid>
-        
-                    <ProgressBar Minimum="0"
-                                 Maximum="100"
-                                 Height="8"
-                                 HorizontalAlignment="Stretch"
-                                 Background="{DynamicResource BorderColor}"
-                                 Foreground="{DynamicResource PrimaryColor}"
-                                 CornerRadius="{DynamicResource FullCornerRadius}"
-                                 Value="{Binding ProgressBarValue}"
-                                 AutomationProperties.Name="Goal overview progress" />
-        
-                    <Border Padding="12"
-                            Background="{DynamicResource SecondaryColor50}"
-                            BorderBrush="{DynamicResource BorderColor}"
-                            BorderThickness="1"
-                            CornerRadius="{DynamicResource LgCornerRadius}">
-                        <Grid ColumnDefinitions="*,*"
-                              ColumnSpacing="12">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Remaining to goal"
-                                           Classes="Caption Muted"
-                                           TextWrapping="Wrap" />
-                                <TextBlock Text="{Binding RemainingCalories, StringFormat='{}{0:0.##} calories'}"
-                                           Classes="Small"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource ForegroundColor}"
-                                           TextWrapping="Wrap" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1"
-                                        Spacing="4">
-                                <TextBlock Text="Status"
-                                           Classes="Caption Muted" />
-                                <TextBlock Text="{Binding StatusMessage}"
-                                           Classes="Small"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource ForegroundColor}"
-                                           TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-            </shad:Card>
-        </DataTemplate>
-
         <DataTemplate x:Key="ThisWeekTemplate"
                       x:DataType="vm:DashboardViewModel">
             <shad:Card MinHeight="300"
@@ -808,16 +712,12 @@
         <shad:BreakpointViewPort HorizontalAlignment="Stretch"
                                  IsVisible="{Binding ShowGoalProgress}">
             <shad:BreakpointView Breakpoint="LgAndUp">
-                <Grid ColumnDefinitions="5*,3*,3*"
+                <Grid ColumnDefinitions="5*,3*"
                       ColumnSpacing="16">
                     <ContentControl Content="{Binding}"
                                     ContentTemplate="{StaticResource TodayProgressTemplate}"
                                     HorizontalContentAlignment="Stretch" />
                     <ContentControl Grid.Column="1"
-                                    Content="{Binding}"
-                                    ContentTemplate="{StaticResource GoalOverviewTemplate}"
-                                    HorizontalContentAlignment="Stretch" />
-                    <ContentControl Grid.Column="2"
                                     Content="{Binding}"
                                     ContentTemplate="{StaticResource ThisWeekTemplate}"
                                     HorizontalContentAlignment="Stretch" />
@@ -829,16 +729,9 @@
                     <ContentControl Content="{Binding}"
                                     ContentTemplate="{StaticResource TodayProgressTemplate}"
                                     HorizontalContentAlignment="Stretch" />
-                    <Grid ColumnDefinitions="*,*"
-                          ColumnSpacing="16">
-                        <ContentControl Content="{Binding}"
-                                        ContentTemplate="{StaticResource GoalOverviewTemplate}"
-                                        HorizontalContentAlignment="Stretch" />
-                        <ContentControl Grid.Column="1"
-                                        Content="{Binding}"
-                                        ContentTemplate="{StaticResource ThisWeekTemplate}"
-                                        HorizontalContentAlignment="Stretch" />
-                    </Grid>
+                    <ContentControl Content="{Binding}"
+                                    ContentTemplate="{StaticResource ThisWeekTemplate}"
+                                    HorizontalContentAlignment="Stretch" />
                 </StackPanel>
             </shad:BreakpointView>
 
@@ -846,9 +739,6 @@
                 <StackPanel Spacing="16">
                     <ContentControl Content="{Binding}"
                                     ContentTemplate="{StaticResource TodayProgressTemplate}"
-                                    HorizontalContentAlignment="Stretch" />
-                    <ContentControl Content="{Binding}"
-                                    ContentTemplate="{StaticResource GoalOverviewTemplate}"
                                     HorizontalContentAlignment="Stretch" />
                     <ContentControl Content="{Binding}"
                                     ContentTemplate="{StaticResource ThisWeekTemplate}"

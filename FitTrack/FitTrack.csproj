@@ -13,6 +13,8 @@
 
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+
         <PublishTrimmed>false</PublishTrimmed>
         <PublishReadyToRun>false</PublishReadyToRun>
 
@@ -30,12 +32,13 @@
         <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1"/>
         <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
-            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">compile</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
-        <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10"/>
-        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.12"/>
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="11.0.0-preview.6.26359.118" />
+        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
         <PackageReference Include="ShadUI" Version="0.2.4" />
+        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
     </ItemGroup>
 </Project>

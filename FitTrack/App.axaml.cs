@@ -46,11 +46,13 @@ public partial class App : Application
             var activityService = new ActivityService(
                 activityRepository,
                 activityCalculators);
+            var rememberedCredentialsStore = new RememberedCredentialsStore();
 
             var loginViewModel = new LoginViewModel(
                 authenticationService,
                 navigationService,
-                static () => DateTimeOffset.UtcNow);
+                static () => DateTimeOffset.UtcNow,
+                rememberedCredentialsStore);
             var registerViewModel = new RegisterViewModel(
                 authenticationService,
                 navigationService);

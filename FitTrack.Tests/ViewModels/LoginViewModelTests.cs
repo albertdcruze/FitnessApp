@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using FitTrack.Common;
@@ -71,6 +72,93 @@ public sealed class LoginViewModelTests
         Assert.False(viewModel.IsPasswordVisible);
         Assert.Equal(string.Empty, viewModel.ErrorMessage);
         Assert.False(viewModel.IsBusy);
+    }
+
+    [Fact]
+    public async Task LoginCommand_RemembersCredentialsAndRestoresThemWhenLoginRouteIsOpened()
+    {
+        var directoryPath = Path.Combine(
+            Path.GetTempPath(),
+            "FitTrackTests",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directoryPath);
+
+        try
+        {
+            await using var database = await RepositoryTestDatabase.CreateAsync();
+            var authenticationService = new AuthenticationService(database.Users);
+            await authenticationService.RegisterAsync("RememberedUser01", Password);
+            var store = new RememberedCredentialsStore(
+                Path.Combine(directoryPath, "remembered-credentials.dat"));
+            var navigationService = new NavigationService();
+            var viewModel = CreateViewModel(
+                authenticationService,
+                navigationService,
+                FixedUtcNow,
+                store);
+            viewModel.Username = "RememberedUser01";
+            viewModel.Password = Password;
+            viewModel.RememberMe = true;
+
+            await viewModel.LoginCommand.ExecuteAsync(null);
+
+            Assert.Equal(AppRoute.Dashboard, navigationService.CurrentRoute);
+            Assert.Equal(string.Empty, viewModel.Password);
+            authenticationService.Logout();
+            navigationService.Navigate(AppRoute.Login);
+
+            Assert.Equal("RememberedUser01", viewModel.Username);
+            Assert.Equal(Password, viewModel.Password);
+            Assert.True(viewModel.RememberMe);
+        }
+        finally
+        {
+            if (Directory.Exists(directoryPath))
+            {
+                Directory.Delete(directoryPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task LoginCommand_WhenRememberMeIsDisabled_ClearsExistingCredentials()
+    {
+        var directoryPath = Path.Combine(
+            Path.GetTempPath(),
+            "FitTrackTests",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directoryPath);
+
+        try
+        {
+            await using var database = await RepositoryTestDatabase.CreateAsync();
+            var authenticationService = new AuthenticationService(database.Users);
+            await authenticationService.RegisterAsync("UnrememberedUser01", Password);
+            var store = new RememberedCredentialsStore(
+                Path.Combine(directoryPath, "remembered-credentials.dat"));
+            store.Save("PreviousUser01", "PreviousPass1");
+            var navigationService = new NavigationService();
+            var viewModel = CreateViewModel(
+                authenticationService,
+                navigationService,
+                FixedUtcNow,
+                store);
+            viewModel.Username = "UnrememberedUser01";
+            viewModel.Password = Password;
+            viewModel.RememberMe = false;
+
+            await viewModel.LoginCommand.ExecuteAsync(null);
+
+            Assert.Equal(AppRoute.Dashboard, navigationService.CurrentRoute);
+            Assert.Null(store.Load());
+        }
+        finally
+        {
+            if (Directory.Exists(directoryPath))
+            {
+                Directory.Delete(directoryPath, recursive: true);
+            }
+        }
     }
 
     [Fact]
@@ -216,12 +304,14 @@ public sealed class LoginViewModelTests
     private static LoginViewModel CreateViewModel(
         AuthenticationService authenticationService,
         NavigationService navigationService,
-        DateTimeOffset? utcNow = null)
+        DateTimeOffset? utcNow = null,
+        RememberedCredentialsStore? rememberedCredentialsStore = null)
     {
         return new LoginViewModel(
             authenticationService,
             navigationService,
-            () => utcNow ?? FixedUtcNow);
+            () => utcNow ?? FixedUtcNow,
+            rememberedCredentialsStore);
     }
 
     private static async Task DropUsersTableAsync(RepositoryTestDatabase database)
