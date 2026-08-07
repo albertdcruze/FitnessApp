@@ -3,6 +3,7 @@ obj/
 .vs/
 .idea/
 TestResults/
+Exe
 *.user
 *.suo
 *.db
